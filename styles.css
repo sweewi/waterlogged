@@ -1,0 +1,454 @@
+/* General body styling */
+body {
+    font-family: 'Roboto', sans-serif; /* Use a consistent modern font */
+    margin: 0;
+    padding: 0;
+    background-color: #add8e6; /* Light blue background */
+    color: #333; /* Consistent text color */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text color */
+}
+
+/* Header styling */
+header {
+    text-align: center; /* Center-align header content */
+    margin-top: 100px; /* Add more spacing below the fixed toolbar */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+}
+
+header h1 {
+    font-family: 'Roboto Slab', serif; /* Use a serif font for the title */
+    color: #00509e; /* Consistent blue color for headings */
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+header.dark-mode h1 {
+    color: #ffffff; /* White title color */
+}
+
+header p {
+    font-family: 'Roboto', sans-serif; /* Use sans-serif for subtitles */
+    color: #333;
+    font-size: 1.2rem;
+    margin: 10px 0 0;
+}
+
+header.dark-mode p {
+    color: #b0b0b0; /* Light gray subtitle color */
+}
+
+/* Subtitle blurb styling */
+.subtitle {
+    text-align: center; /* Center-align the subtitle */
+    color: #555; /* Medium gray text color */
+    font-size: 1.2rem; /* Slightly smaller font size */
+    margin-top: 100px; /* Add spacing below the toolbar */
+    margin-bottom: 20px; /* Add spacing below the subtitle */
+}
+
+subtitle.dark-mode {
+    color: #b0b0b0; /* Light gray text color for dark mode */
+}
+
+/* Navigation menu styling */
+nav {
+    position: fixed; /* Fix the nav at the top */
+    top: 0;
+    left: 0;
+    width: 100%; /* Full-width toolbar */
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    z-index: 1000; /* Ensure it stays above other elements */
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space out elements */
+    align-items: center; /* Center items vertically */
+    padding: 10px 20px; /* Add padding for better spacing */
+    height: 60px; /* Set a consistent height */
+    backdrop-filter: blur(10px); /* Add blur effect for transparency */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+}
+
+nav.dark-mode {
+    background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent dark background for dark mode */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+}
+
+/* Title styling inside the toolbar */
+nav .toolbar-title {
+    font-size: 1.5rem; /* Adjust font size for the title */
+    font-weight: bold; /* Make the title bold */
+    color: #00509e; /* Blue color for the title */
+}
+
+nav.dark-mode .toolbar-title {
+    color: #e0e0e0; /* Light text color for dark mode */
+}
+
+/* Hamburger menu styling */
+#menu-button {
+    background: none; /* Remove default button background */
+    border: none; /* Remove default button border */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack menu lines vertically */
+    gap: 5px; /* Add spacing between menu lines */
+    padding: 10px; /* Add padding for better click area */
+    z-index: 1100; /* Ensure the button is above other elements */
+    position: relative; /* Ensure proper stacking context */
+}
+
+#menu-button span {
+    display: block; /* Make each line a block element */
+    width: 30px; /* Increase width of menu lines */
+    height: 4px; /* Increase height of menu lines */
+    background-color: #00509e; /* Blue color for menu lines */
+    border-radius: 2px; /* Add rounded corners */
+}
+
+/* Adjust the pop-up menu width and remove bullet points */
+#menu {
+    width: 150px; /* Further reduce the width of the menu */
+    padding: 10px; /* Add padding inside the menu */
+    background-color: #fff; /* White background for the menu */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+    position: absolute; /* Position menu below the button */
+    top: 60px; /* Adjust position to align with the toolbar */
+    left: 10px; /* Align with the hamburger button */
+    display: none; /* Hide menu by default */
+    animation: slideDown 0.5s ease-in-out; /* Smooth slide-down effect */
+    list-style: none; /* Remove bullet points */
+}
+
+#menu.hidden {
+    display: none; /* Ensure menu is hidden when the "hidden" class is applied */
+}
+
+#menu.dark-mode {
+    background-color: #1e1e1e; /* Dark background for menu */
+}
+
+#menu li {
+    margin: 5px 0; /* Add spacing between menu items */
+}
+
+#menu a {
+    text-decoration: none; /* Remove underline from links */
+    color: #00509e; /* Blue color for links */
+    font-size: 1rem; /* Set font size for links */
+}
+
+#menu.dark-mode a {
+    color: #e0e0e0; /* Light text color for links */
+}
+
+/* Section headings */
+h2 {
+    font-family: 'Roboto Slab', serif; /* Use serif font for section headings */
+    color: #00509e;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Content box styling */
+.content-box {
+    font-family: 'Roboto', sans-serif; /* Use consistent sans-serif font */
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 1s ease-in;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+}
+
+.content-box.dark-mode {
+    background-color: #1e1e1e; /* Dark background for content boxes */
+    color: #e0e0e0; /* Light text color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+}
+
+/* Team container styling */
+.team-container {
+    display: grid; /* Use grid layout for team boxes */
+    grid-template-columns: repeat(2, 150px); /* Create two columns with fixed width */
+    gap: 40px; /* Add spacing between boxes */
+    justify-content: center; /* Center the grid within the page */
+    align-items: center; /* Align items vertically */
+    margin: 20px auto; /* Center the container and add vertical spacing */
+    width: 0; /* Allow content to determine width */
+}
+
+/* Individual team box styling */
+.team-box {
+    width: 150px; /* Set fixed width */
+    height: 150px; /* Set fixed height */
+    background-color: #fff; /* White background for boxes */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+    border-radius: 10px; /* Add rounded corners */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.team-box.dark-mode {
+    background-color: #1e1e1e; /* Dark background for team boxes */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+}
+
+.team-box:hover {
+    transform: scale(1.1); /* Slightly enlarge the box on hover */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Add a stronger shadow on hover */
+}
+
+/* Special styling for the fifth team box */
+.team-box:nth-child(5) {
+    grid-column: span 2; /* Make the box span two columns */
+    justify-self: center; /* Center the box within the grid */
+}
+
+/* Modal container styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed position for overlay */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    justify-content: center; /* Center modal horizontally */
+    align-items: center; /* Center modal vertically */
+    z-index: 1000; /* Ensure it appears above other elements */
+    overflow: auto; /* Allow scrolling if content exceeds viewport */
+}
+
+/* Modal content box styling */
+.modal-content {
+    background-color: #fff; /* White background for the modal */
+    padding: 10px; /* Add padding inside the modal */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    text-align: center; /* Center-align text */
+    display: inline-block; /* Allow the modal to size itself based on its content */
+    width: auto; /* Allow width to adjust based on content */
+    height: auto; /* Allow height to adjust based on content */
+    max-width: 90%; /* Ensure the modal does not exceed the viewport width */
+    max-height: 90%; /* Ensure the modal does not exceed the viewport height */
+    overflow: hidden; /* Prevent cropping of content */
+}
+
+/* Modal image styling */
+.modal-content img {
+    width: auto; /* Maintain the image's original width */
+    height: 90vh; /* Prioritize the height to fit within the viewport */
+    max-width: 90vw; /* Ensure the image fits within the viewport width */
+    display: block; /* Ensure the image is treated as a block element */
+    margin: 0 auto; /* Center the image horizontally */
+    object-fit: contain; /* Ensure the entire image is visible without cropping */
+}
+
+/* Adjust modal content for dark mode */
+.modal-content.dark-mode {
+    background-color: #1e1e1e; /* Dark background for modal */
+    color: #e0e0e0; /* Light text color */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+}
+
+/* Close button styling */
+.modal-close {
+    background: none; /* Remove default button background */
+    border: none; /* Remove default button border */
+    font-size: 1.5rem; /* Larger font size for visibility */
+    color: #333; /* Dark gray color */
+    cursor: pointer; /* Pointer cursor on hover */
+    position: absolute; /* Position relative to modal content */
+    top: 10px;
+    right: 10px;
+}
+
+/* Placeholder image styling */
+.modal img {
+    width: 100%; /* Full width of the modal */
+    max-height: 200px; /* Limit height */
+    object-fit: cover; /* Maintain aspect ratio */
+    border-radius: 10px; /* Rounded corners */
+}
+
+/* Dark mode toggle button styling */
+#dark-mode-toggle {
+    position: sticky; /* Change to fixed positioning to ensure it stays visible */
+    top: 10px; /* Align with the toolbar */
+    right: 20px; /* Move it 20px from the right edge */
+    background-color: #00509e; /* Blue background to match the website's theme */
+    color: #fff; /* White text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Add padding for better appearance */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 1rem; /* Match font size with the rest of the site */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+#dark-mode-toggle:hover {
+    background-color: #003f7f; /* Darker blue on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+#dark-mode-toggle:active {
+    transform: scale(0.95); /* Slightly shrink on click */
+}
+
+/* Add keyframes for animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Placeholder styling for lazy-loaded elements */
+iframe[loading="lazy"] {
+    background-color: #e0e0e0; /* Light gray background as a placeholder */
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+    /* Adjust navigation menu for mobile */
+    nav {
+        flex-direction: column; /* Stack navigation items vertically */
+        align-items: flex-start; /* Align items to the left */
+        padding: 10px; /* Reduce padding for smaller screens */
+    }
+
+    #menu {
+        position: static; /* Make the menu flow with the document */
+        width: 100%; /* Full-width menu */
+        text-align: left; /* Align menu items to the left */
+        padding: 0; /* Remove extra padding */
+    }
+
+    #menu li {
+        margin: 10px 0; /* Add spacing between menu items */
+    }
+
+    #menu-button {
+        align-self: flex-end; /* Align the menu button to the right */
+    }
+
+    /* Adjust header for mobile */
+    header {
+        margin-top: 80px; /* Add space below the fixed nav */
+    }
+
+    header h1 {
+        font-size: 1.8rem; /* Reduce font size for smaller screens */
+    }
+
+    header p {
+        font-size: 1rem; /* Adjust subtitle font size */
+    }
+
+    /* Adjust content box for mobile */
+    .content-box {
+        width: 90%; /* Increase width for better readability */
+        padding: 15px; /* Reduce padding for smaller screens */
+    }
+
+    /* Adjust team container for mobile */
+    .team-container {
+        grid-template-columns: 1fr; /* Stack team boxes in a single column */
+        gap: 20px; /* Reduce spacing between boxes */
+    }
+
+    .team-box {
+        margin: 0 auto; /* Center team boxes */
+    }
+
+    /* Adjust photo gallery for mobile */
+    #photo-gallery {
+        flex-direction: column; /* Stack gallery elements vertically */
+        align-items: center; /* Center-align gallery elements */
+    }
+
+    #prev-button, #next-button {
+        margin: 10px 0; /* Add spacing above and below buttons */
+    }
+
+    #gallery-image {
+        width: 100%; /* Make the image responsive */
+        max-width: 300px; /* Limit the maximum width */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    /* Adjust footer for mobile */
+    footer {
+        font-size: 0.9rem; /* Reduce font size for smaller screens */
+        padding: 15px; /* Reduce padding */
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further adjustments for very small screens */
+    nav {
+        padding: 5px; /* Reduce padding further */
+    }
+
+    header h1 {
+        font-size: 1.5rem; /* Further reduce font size */
+    }
+
+    .content-box {
+        padding: 10px; /* Reduce padding further */
+    }
+
+    footer {
+        font-size: 0.8rem; /* Further reduce font size */
+    }
+}
+
+/* Contact footer styling */
+main {
+    flex: 1; /* Allow the main content to grow and push the footer down */
+}
+
+footer {
+    font-family: 'Roboto', sans-serif; /* Consistent font */
+    background-color: #00509e; /* Blue background */
+    color: #fff; /* White text */
+    text-align: center;
+    padding: 20px;
+    font-size: 1rem;
+    margin-top: 40px;
+}
+
+footer a {
+    color: #ffdd00; /* Yellow for links */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
