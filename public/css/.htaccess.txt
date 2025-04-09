@@ -1,0 +1,13 @@
+<IfModule mod_deflate.c>
+  # Compress HTML, CSS, JavaScript, Text, XML, and fonts
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript application/json
+  AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml
+  AddOutputFilterByType DEFLATE application/font-woff application/font-woff2
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Add headers to inform the client that compression is enabled
+  Header append Vary Accept-Encoding
+</IfModule>

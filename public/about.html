@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> <!-- Set character encoding -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensure responsive design -->
+  <title>About - Waterlogged</title> <!-- Page title -->
+  <style>
+    /* Critical CSS for above-the-fold content */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #add8e6;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      height: 60px;
+      backdrop-filter: blur(10px);
+    }
+    .subtitle {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      text-align: center;
+      color: #555;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+  </style>
+  <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
+  <meta name="description" content="Learn more about WaterLogged, a localized rain gauge network for community science. Meet the team and explore our mission.">
+  <meta name="keywords" content="WaterLogged, about, rain gauge, community science, localized rainfall, Boston College">
+  <meta name="author" content="WaterLogged Team">
+  <meta property="og:title" content="About WaterLogged - Localized Rain Gauge Network">
+  <meta property="og:description" content="Learn more about WaterLogged, a localized rain gauge network for community science. Meet the team and explore our mission.">
+  <meta property="og:image" content="https://via.placeholder.com/1200x630?text=About+WaterLogged">
+  <meta property="og:url" content="https://www.waterlogged-website.com/about.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About WaterLogged - Localized Rain Gauge Network">
+  <meta name="twitter:description" content="Learn more about WaterLogged, a localized rain gauge network for community science. Meet the team and explore our mission.">
+  <meta name="twitter:image" content="https://via.placeholder.com/1200x630?text=About+WaterLogged">
+</head>
+<body>
+  <!-- Navigation menu -->
+  <nav>
+    <div id="menu-container">
+      <button id="menu-button" aria-label="Toggle navigation menu"> <!-- Added aria-label -->
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <ul id="menu" class="hidden" aria-hidden="true"> <!-- Added aria-hidden -->
+      <li><a href="index.html" aria-label="Go to Home page">Home</a></li>
+      <li><a href="about.html" aria-label="Go to About page">About</a></li>
+      <li><a href="photos.html" aria-label="Go to Photos page">Photos</a></li>
+    </ul>
+    <span class="toolbar-title" aria-hidden="true">WATERLOGGED</span> <!-- Marked as decorative -->
+    <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">Dark Mode</button>
+  </nav>
+
+  <!-- Subtitle blurb -->
+  <p class="subtitle">Building a Localized Rain Gauge Network for Community Science.</p>
+
+  <!-- Main content -->
+  <main>
+    <!-- About section -->
+    <h2 id="about-heading">About WaterLogged</h2> <!-- Added id for reference -->
+    <div class="content-box" aria-labelledby="about-heading"> <!-- Added aria-labelledby -->
+      <p>
+        Rainfall data is essential for climate modeling, flood prediction, and infrastructure design, yet much of the nation’s current data collection is conducted manually and without the spatial coverage to measure hyper-local variations. Our team designed a low-cost, automated rain gauge with the capacity to expand the National Weather Service’s current gauge network while inspiring future community scientists.
+      </p>
+    </div>
+
+    <!-- Team section -->
+    <h2>About WaterLogged: Meet the Team</h2>
+    <div class="team-container"> <!-- Grid container for team boxes -->
+      <div class="team-box" data-name="Charlie" data-blurb="Environmental concentration. Interested in coastal resilience and green development." data-image="images/charlie.webp" style="margin-bottom: 20px;">
+        <picture>
+          <source srcset="images/charlie.webp" type="image/webp">
+          <img src="images/charlie.png" alt="Charlie - Environmental concentration, interested in coastal resilience and green development" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+        </picture>
+        <p style="text-align: center; margin-top: 5px; font-weight: bold;">Charlie</p>
+      </div>
+      <div class="team-box" data-name="Annie" data-blurb="Environmental concentration. Interested in green infrastructure and environmental health." data-image="images/annie.webp" style="margin-bottom: 20px;">
+        <picture>
+          <source srcset="images/annie.webp" type="image/webp">
+          <img src="images/annie.jpg" alt="Annie - Environmental concentration, interested in green infrastructure and environmental health" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+        </picture>
+        <p style="text-align: center; margin-top: 5px; font-weight: bold;">Annie</p>
+      </div>
+      <div class="team-box" data-name="Peyton" data-blurb="Environmental concentration. Interested in ecology, biology, manufacturing." data-image="images/peyton.jpg" style="margin-bottom: 20px;">
+        <img src="images/peyton.jpg" alt="Peyton - Environmental concentration, interested in ecology, biology, manufacturing" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+        <p style="text-align: center; margin-top: 5px; font-weight: bold;">Peyton</p>
+      </div>
+      <div class="team-box" data-name="Nava" data-blurb="Health concentration. Interested in BME / Medical Devices. Research." data-image="images/nava.jpg" style="margin-bottom: 20px;">
+        <img src="images/nava.jpg" alt="Nava - Health concentration, interested in BME / Medical Devices, Research" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+        <p style="text-align: center; margin-top: 5px; font-weight: bold;">Nava</p>
+      </div>
+      <div class="team-box" data-name="Will" data-blurb="Environmental concentration. Interested in Biotech, BME, and Materials Science." data-image="images/will.png" style="margin-bottom: 20px;">
+        <img src="images/will.png" alt="Will - Environmental concentration, interested in Biotech, BME, and Materials Science" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+        <p style="text-align: center; margin-top: 5px; font-weight: bold;">Will</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Contact footer -->
+  <footer>
+    Learn more about <a href="https://www.bc.edu/bc-web/schools/morrissey/departments/engineering.html" target="_blank">Boston College Human-Centered Engineering</a>.
+  </footer>
+
+  <!-- Modal for team profiles -->
+  <div class="modal" id="team-modal">
+    <div class="modal-content" style="background-color: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); text-align: center; display: inline-block; width: auto; height: auto; max-width: 70%; max-height: 70%; overflow: auto;">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <img src="https://via.placeholder.com/400x200" alt="Team Member Image" id="modal-image" style="width: auto; height: auto; max-width: 400px; max-height: 300px; display: block; margin: 0 auto;">
+      <h3 id="modal-name">Team Member Name</h3>
+      <p id="modal-blurb">Team Member Blurb</p>
+    </div>
+  </div>
+
+  <!-- JavaScript for menu toggle and dark mode -->
+  <script defer src="/js/main.js"></script>
+  <script>
+    document.getElementById('menu-button').addEventListener('click', () => {
+        const menu = document.getElementById('menu');
+        menu.classList.toggle('hidden'); // Toggle the "hidden" class
+        if (menu.classList.contains('hidden')) {
+            menu.style.display = 'none'; // Hide menu
+        } else {
+            menu.style.display = 'block'; // Show menu
+        }
+    });
+
+    // Dark mode toggle functionality
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode'); // Toggle dark mode on body
+      document.querySelectorAll('header, nav, .content-box, .team-box, .modal-content').forEach(el => {
+        el.classList.toggle('dark-mode'); // Toggle dark mode on relevant elements
+      });
+    });
+
+    // JavaScript for handling the modal
+    const modal = document.getElementById('team-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalName = document.getElementById('modal-name');
+    const modalBlurb = document.getElementById('modal-blurb');
+    const modalClose = document.getElementById('modal-close');
+
+    // Open modal on team box click
+    document.querySelectorAll('.team-box').forEach(box => {
+      box.addEventListener('click', () => {
+        const name = box.getAttribute('data-name');
+        const blurb = box.getAttribute('data-blurb');
+        const image = box.getAttribute('data-image'); // Get the image URL
+        modalName.textContent = name;
+        modalBlurb.textContent = blurb;
+        modalImage.src = image; // Set the image source
+        modalImage.alt = name; // Set the alt text for accessibility
+        modal.style.display = 'flex'; // Show modal
+      });
+    });
+
+    // Close modal on close button click
+    modalClose.addEventListener('click', () => {
+      modal.style.display = 'none'; // Hide modal
+    });
+
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none'; // Hide modal
+      }
+    });
+  </script>
+</body>
+</html>

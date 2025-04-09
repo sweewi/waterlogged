@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> <!-- Set character encoding -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensure responsive design -->
+  <title>Photos - Waterlogged</title> <!-- Page title -->
+  <style>
+    /* Critical CSS for above-the-fold content */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #add8e6;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      height: 60px;
+      backdrop-filter: blur(10px);
+    }
+    .subtitle {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      text-align: center;
+      color: #555;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+  </style>
+  <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
+  <meta name="description" content="Explore the WaterLogged photo gallery showcasing our rain gauge network and community science efforts.">
+  <meta name="keywords" content="WaterLogged, photos, rain gauge, community science, localized rainfall, Boston College">
+  <meta name="author" content="WaterLogged Team">
+  <meta property="og:title" content="WaterLogged Photo Gallery">
+  <meta property="og:description" content="Explore the WaterLogged photo gallery showcasing our rain gauge network and community science efforts.">
+  <meta property="og:image" content="https://via.placeholder.com/1200x630?text=WaterLogged+Photos">
+  <meta property="og:url" content="https://www.waterlogged-website.com/photos.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WaterLogged Photo Gallery">
+  <meta name="twitter:description" content="Explore the WaterLogged photo gallery showcasing our rain gauge network and community science efforts.">
+  <meta name="twitter:image" content="https://via.placeholder.com/1200x630?text=WaterLogged+Photos">
+</head>
+<body>
+  <!-- Navigation menu -->
+  <nav>
+    <button id="menu-button" aria-label="Toggle navigation menu"> <!-- Added aria-label -->
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <ul id="menu" class="hidden" aria-hidden="true"> <!-- Added aria-hidden -->
+      <li><a href="index.html" aria-label="Go to Home page">Home</a></li> <!-- Added aria-label -->
+      <li><a href="about.html" aria-label="Go to About page">About</a></li> <!-- Added aria-label -->
+      <li><a href="photos.html" aria-label="Go to Photos page">Photos</a></li> <!-- Added aria-label -->
+    </ul>
+    <span class="toolbar-title" aria-hidden="true">WATERLOGGED</span> <!-- Marked as decorative -->
+    <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">Dark Mode</button> <!-- Dark mode toggle button -->
+  </nav>
+
+  <!-- Subtitle blurb -->
+  <p class="subtitle">Building a Localized Rain Gauge Network for Community Science.</p>
+
+  <!-- Main content -->
+  <main style="margin-top: 10px;"> <!-- Add margin to push content below the toolbar -->
+    <!-- Photo gallery section -->
+    <h2 id="photo-gallery-heading">Photo Gallery</h2> <!-- Added id for reference -->
+    <div class="content-box" aria-labelledby="photo-gallery-heading"> <!-- Added aria-labelledby -->
+      <div id="photo-gallery" class="gallery-container" role="region" aria-label="Photo gallery"> <!-- Added role and aria-label -->
+        <button id="prev-button" aria-label="Previous Photo">&lt;</button> <!-- Added aria-label -->
+        <picture>
+          <source id="gallery-image-source" srcset="https://via.placeholder.com/600x400.webp?text=Photo+1" type="image/webp">
+          <img id="gallery-image" src="https://via.placeholder.com/600x400?text=Photo+1" alt="Photo 1">
+        </picture>
+        <button id="next-button" aria-label="Next Photo">&gt;</button> <!-- Added aria-label -->
+      </div>
+      <p id="photo-caption" aria-live="polite">Photo 1 of 10</p> <!-- Added aria-live -->
+    </div>
+  </main>
+
+  <!-- Contact footer -->
+  <footer>
+    Learn more about <a href="https://www.bc.edu/bc-web/schools/morrissey/departments/engineering.html" target="_blank">Boston College Human-Centered Engineering</a>.
+  </footer>
+
+  <!-- JavaScript for menu toggle and photo gallery -->
+  <script defer src="/js/main.js"></script>
+  <script>
+    document.getElementById('menu-button').addEventListener('click', () => {
+        const menu = document.getElementById('menu');
+        menu.classList.toggle('hidden'); // Toggle the "hidden" class
+        if (menu.classList.contains('hidden')) {
+            menu.style.display = 'none'; // Hide menu
+        } else {
+            menu.style.display = 'block'; // Show menu
+        }
+    });
+
+    // Dark mode toggle functionality
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode'); // Toggle dark mode on body
+        document.querySelectorAll('header, nav, .content-box').forEach(el => {
+            el.classList.toggle('dark-mode'); // Toggle dark mode on relevant elements
+        });
+    });
+
+    // Interactive photo gallery functionality
+    const photos = [
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+1", fallback: "https://via.placeholder.com/600x400?text=Photo+1" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+2", fallback: "https://via.placeholder.com/600x400?text=Photo+2" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+3", fallback: "https://via.placeholder.com/600x400?text=Photo+3" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+4", fallback: "https://via.placeholder.com/600x400?text=Photo+4" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+5", fallback: "https://via.placeholder.com/600x400?text=Photo+5" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+6", fallback: "https://via.placeholder.com/600x400?text=Photo+6" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+7", fallback: "https://via.placeholder.com/600x400?text=Photo+7" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+8", fallback: "https://via.placeholder.com/600x400?text=Photo+8" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+9", fallback: "https://via.placeholder.com/600x400?text=Photo+9" },
+      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+10", fallback: "https://via.placeholder.com/600x400?text=Photo+10" }
+    ];
+    let currentPhotoIndex = 0;
+
+    const galleryImageSource = document.getElementById('gallery-image-source');
+    const galleryImage = document.getElementById('gallery-image');
+    const photoCaption = document.getElementById('photo-caption');
+    const prevButton = document.getElementById('prev-button');
+    const nextButton = document.getElementById('next-button');
+
+    function updateGallery() {
+      galleryImageSource.srcset = photos[currentPhotoIndex].webp;
+      galleryImage.src = photos[currentPhotoIndex].fallback;
+      galleryImage.alt = `Photo ${currentPhotoIndex + 1}`;
+      photoCaption.textContent = `Photo ${currentPhotoIndex + 1} of ${photos.length}`;
+    }
+
+    prevButton.addEventListener('click', () => {
+      currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+      updateGallery();
+    });
+
+    nextButton.addEventListener('click', () => {
+      currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+      updateGallery();
+    });
+  </script>
+</body>
+</html>
