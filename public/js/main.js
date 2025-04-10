@@ -90,42 +90,46 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalBlurb = document.getElementById('modal-blurb');
   const modalClose = document.getElementById('modal-close');
 
-  if (modal && modalImage && modalName && modalBlurb && modalClose) {
-    document.querySelectorAll('.team-box').forEach(box => {
-      box.addEventListener('click', () => {
-        console.log('Team box clicked:', box);
-        const name = box.getAttribute('data-name');
-        const blurb = box.getAttribute('data-blurb');
-        const image = box.getAttribute('data-image');
-        if (name && blurb && image) {
-          console.log('Modal data:', { name, blurb, image });
-          modalName.textContent = name;
-          modalBlurb.textContent = blurb;
-          modalImage.src = image;
-          modalImage.alt = name;
-          modal.style.display = 'flex';
-          modal.style.visibility = 'visible'; // Ensure visibility
-          modal.style.opacity = '1'; // Ensure opacity for visibility
-          modal.style.justifyContent = 'center'; // Ensure proper alignment
-          modal.style.alignItems = 'center';
-          console.log('Modal should now be visible.');
-        } else {
-          console.error('Missing modal data attributes for:', box);
-        }
-      });
-    });
-
-    // Add a debug log to check modal visibility on click
-    modalClose.addEventListener('click', () => {
-      console.log('Modal close button clicked.');
-      modal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        console.log('Clicked outside modal. Closing modal.');
-        modal.style.display = 'none';
-      }
-    });
+  if (!modal || !modalImage || !modalName || !modalBlurb || !modalClose) {
+    console.error('Modal elements are missing from the DOM.');
+    return;
   }
+
+  console.log('Modal elements found:', { modal, modalImage, modalName, modalBlurb, modalClose });
+
+  document.querySelectorAll('.team-box').forEach(box => {
+    console.log('Setting up click listener for:', box);
+    box.addEventListener('click', () => {
+      const name = box.getAttribute('data-name');
+      const blurb = box.getAttribute('data-blurb');
+      const image = box.getAttribute('data-image');
+
+      if (!name || !blurb || !image) {
+        console.error('Missing data attributes for:', box);
+        return;
+      }
+
+      console.log('Opening modal with data:', { name, blurb, image });
+      modalName.textContent = name;
+      modalBlurb.textContent = blurb;
+      modalImage.src = image;
+      modalImage.alt = name;
+
+      modal.style.display = 'flex';
+      modal.style.visibility = 'visible';
+      modal.style.opacity = '1';
+    });
+  });
+
+  modalClose.addEventListener('click', () => {
+    console.log('Closing modal.');
+    modal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      console.log('Clicked outside modal. Closing modal.');
+      modal.style.display = 'none';
+    }
+  });
 });

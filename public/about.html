@@ -136,17 +136,18 @@
     Learn more about <a href="https://www.bc.edu/bc-web/schools/morrissey/departments/engineering.html" target="_blank">Boston College Human-Centered Engineering</a>.
   </footer>
 
-  <!-- Modal for team profiles -->
-  <div class="modal" id="team-modal">
-    <div class="modal-content" style="background-color: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); text-align: center; display: inline-block; width: auto; height: auto; max-width: 70%; max-height: 70%; overflow: auto;">
+  <!-- Rebuilt modal structure -->
+  <div class="modal" id="team-modal" style="display: none;">
+    <div class="modal-content">
       <button class="modal-close" id="modal-close">&times;</button>
-      <img src="https://via.placeholder.com/400x200" alt="Team Member Image" id="modal-image" style="width: auto; height: auto; max-width: 400px; max-height: 300px; display: block; margin: 0 auto;">
-      <h3 id="modal-name">Team Member Name</h3>
-      <p id="modal-blurb">Team Member Blurb</p>
+      <img id="modal-image" alt="Team Member Image" />
+      <h3 id="modal-name"></h3>
+      <p id="modal-blurb"></p>
     </div>
   </div>
 
   <!-- JavaScript for menu toggle and dark mode -->
+  <script defer src="/js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
         const menuButton = document.getElementById('menu-button');
