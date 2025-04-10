@@ -194,22 +194,58 @@ function addComparisonControls(ctx, chart) {
     updateComparison(chart);
 }
 
+/**
+ * Updates the comparison chart with new data based on selected periods
+ * @param {Chart} chart - The Chart.js instance to update
+ */
 function updateComparison(chart) {
-    const currentPeriod = document.getElementById('currentPeriod').value;
-    const comparisonPeriod = document.getElementById('comparisonPeriod').value;
+    try {
+        const currentPeriod = document.getElementById('currentPeriod').value;
+        const comparisonPeriod = document.getElementById('comparisonPeriod').value;
 
-    // Fetch data from the parent window's RainDataVisualization instance
-    const parentWindow = window.parent || window;
-    if (parentWindow.rainVisualization) {
-        const currentData = parentWindow.rainVisualization.getHistoricalData(currentPeriod);
-        const comparisonData = parentWindow.rainVisualization.getHistoricalData(comparisonPeriod);
-
-        updateChart(chart, currentData, comparisonData);
-        updateStatistics(currentData, comparisonData);
+        // Fetch data for both periods
+        fetchPeriodData(currentPeriod)
+            .then(currentData => {
+                fetchPeriodData(comparisonPeriod)
+                    .then(comparisonData => {
+                        updateChartData(chart, currentData, comparisonData);
+                        updateStatistics(currentData, comparisonData);
+                    })
+                    .catch(handleDataError);
+            })
+            .catch(handleDataError);
+    } catch (error) {
+        console.error('Error updating comparison:', error);
+        showErrorMessage('Failed to update comparison. Please try again.');
     }
 }
 
-function updateChart(chart, currentData, comparisonData) {
+/**
+ * Handles data fetch errors
+ * @param {Error} error - The error that occurred
+ */
+function handleDataError(error) {
+    console.error('Error fetching period data:', error);
+    showErrorMessage('Failed to fetch comparison data. Please try again.');
+}
+
+/**
+ * Displays an error message to the user
+ * @param {string} message - The error message to display
+ */
+function showErrorMessage(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    
+    const chartContainer = document.querySelector('.chart-controls');
+    if (chartContainer) {
+        chartContainer.insertAdjacentElement('beforebegin', errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
+    }
+}
+
+function updateChartData(chart, currentData, comparisonData) {
     // Update datasets
     chart.data.labels = currentData.map(d => d.timestamp);
     chart.data.datasets[0].data = currentData.map(d => d.rainfall);
@@ -251,6 +287,94 @@ function updateStatistics(currentData, comparisonData) {
     document.getElementById('comparisonPeak').textContent = `${comparison.peak.toFixed(2)} in/hr`;
     document.getElementById('totalDiff').textContent = `${(current.total - comparison.total).toFixed(2)} in`;
     document.getElementById('peakDiff').textContent = `${(current.peak - comparison.peak).toFixed(2)} in/hr`;
+}
+
+/**
+ * Data exploration and comparison module
+ */
+
+/**
+ * Initializes comparison functionality
+ * @param {Array} datasets - Array of available datasets
+ */
+function initializeComparison(datasets) {
+    try {
+        setupDatasetSelectors(datasets);
+        bindComparisonEvents();
+    } catch (error) {
+        console.error('Failed to initialize comparison:', error);
+        showComparisonError('Failed to initialize comparison tools');
+    }
+}
+
+/**
+ * Compares two selected datasets and visualizes the results
+ * @param {string} dataset1 - First dataset ID
+ * @param {string} dataset2 - Second dataset ID
+ */
+async function compareDatasets(dataset1, dataset2) {
+    try {
+        const data1 = await fetchDataset(dataset1);
+        const data2 = await fetchDataset(dataset2);
+        
+        if (!data1 || !data2) {
+            throw new Error('Failed to fetch comparison data');
+        }
+
+        const comparisonResults = analyzeDatasets(data1, data2);
+        visualizeComparison(comparisonResults);
+        updateComparisonStats(comparisonResults);
+    } catch (error) {
+        console.error('Comparison failed:', error);
+        showComparisonError('Failed to compare datasets. Please try again.');
+    }
+}
+
+/**
+ * Analyzes two datasets and calculates comparison metrics
+ * @param {Array} data1 - First dataset
+ * @param {Array} data2 - Second dataset
+ * @returns {Object} Comparison metrics and analysis
+ */
+function analyzeDatasets(data1, data2) {
+    try {
+        return {
+            correlation: calculateCorrelation(data1, data2),
+            differences: findSignificantDifferences(data1, data2),
+            summary: generateComparisonSummary(data1, data2)
+        };
+    } catch (error) {
+        console.error('Analysis failed:', error);
+        throw new Error('Failed to analyze datasets');
+    }
+}
+
+/**
+ * Displays an error message in the comparison section
+ * @param {string} message - The error message to display
+ */
+function showComparisonError(message) {
+    const errorContainer = document.getElementById('comparison-errors') || 
+        createComparisonErrorContainer();
+    
+    errorContainer.textContent = message;
+    errorContainer.style.display = 'block';
+    
+    setTimeout(() => {
+        errorContainer.style.display = 'none';
+    }, 5000);
+}
+
+/**
+ * Creates an error container for the comparison section
+ * @returns {HTMLElement} The error container element
+ */
+function createComparisonErrorContainer() {
+    const container = document.createElement('div');
+    container.id = 'comparison-errors';
+    container.className = 'error-message';
+    document.querySelector('.comparison-container').prepend(container);
+    return container;
 }
 
 // Tutorial functions
