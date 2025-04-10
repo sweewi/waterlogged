@@ -111,6 +111,11 @@ nav.dark-mode .toolbar-title {
   height: 4px;
   background-color: #00509e;
   border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+#menu-button.dark-mode span {
+  background-color: #e0e0e0;
 }
 
 #menu {
@@ -124,6 +129,7 @@ nav.dark-mode .toolbar-title {
   display: none;
   animation: slideDown .5s ease-in-out;
   list-style: none;
+  z-index: 1000;
 }
 
 #menu.hidden {
@@ -141,7 +147,6 @@ nav.dark-mode .toolbar-title {
 #menu a {
   text-decoration: none;
   color: #00509e;
-  font-size: 1rem;
 }
 
 #menu.dark-mode a {
@@ -175,7 +180,7 @@ main {
   transition: background-color .3s ease, color .3s ease;
 }
 
-.content-box.dark-mode {
+content-box.dark-mode {
   background-color: #1e1e1e;
   color: #e0e0e0;
   box-shadow: 0 0 10px rgba(0, 0, 0, .5);

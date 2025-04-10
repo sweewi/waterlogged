@@ -31,4 +31,47 @@ document.addEventListener('DOMContentLoaded', () => {
     adjustMargin();
     window.addEventListener('resize', adjustMargin);
   }
+
+  // Hamburger menu toggle
+  const menuButton = document.getElementById('menu-button');
+  const menu = document.getElementById('menu');
+  if (menuButton && menu) {
+    menuButton.addEventListener('click', () => {
+      const isHidden = menu.classList.toggle('hidden');
+      menu.setAttribute('aria-hidden', isHidden);
+    });
+  }
+
+  // Dark mode toggle
+  const darkModeToggle = document.getElementById('dark-mode-toggle');
+  if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      menu.classList.toggle('dark-mode');
+    });
+  }
+
+  // Weather data fetch
+  const weatherContainer = document.getElementById('weather-container');
+  if (weatherContainer) {
+    fetch('/api/weather')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const weatherData = `
+          <strong>Location:</strong> ${data.location}<br>
+          <strong>Temperature:</strong> ${data.temperature}°F<br>
+          <strong>Condition:</strong> ${data.condition}
+        `;
+        weatherContainer.innerHTML = weatherData;
+      })
+      .catch(error => {
+        console.error('Error fetching weather data:', error);
+        weatherContainer.innerHTML = '<p>Error loading weather data. Please try again later.</p>';
+      });
+  }
 });
