@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const dataContainer = document.getElementById('data-container');
   if (!dataContainer) {
     console.error('Error: #data-container element not found.');
-    return;
+    return; // Exit early if the element is missing
   }
 
   fetch('/api/data')
