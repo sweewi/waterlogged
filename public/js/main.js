@@ -37,9 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuButton = document.getElementById('menu-button');
   const menu = document.getElementById('menu');
   if (menuButton && menu) {
-    console.log('Menu button and menu found. Adding event listener.');
     menuButton.addEventListener('click', () => {
-      console.log('Menu button clicked.');
       menu.classList.toggle('hidden');
       menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
       menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
@@ -51,16 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Dark mode toggle
   const darkModeToggle = document.getElementById('dark-mode-toggle');
   if (darkModeToggle) {
-    console.log('Dark mode toggle button found. Adding event listener.');
     darkModeToggle.addEventListener('click', () => {
-      console.log('Dark mode toggle clicked.');
       document.body.classList.toggle('dark-mode');
-      menu.classList.toggle('dark-mode');
-      console.log('Dark mode toggled.');
+      document.querySelectorAll('header, nav, .content-box').forEach(el => {
+        el.classList.toggle('dark-mode');
+      });
     });
-    console.log('Event listener for dark-mode-toggle attached successfully.');
   } else {
-    console.error('Error: Dark mode toggle button not found.');
+    console.error('Dark mode toggle button not found.');
   }
 
   // Weather data fetch
@@ -85,5 +81,47 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error fetching weather data:', error);
         weatherContainer.innerHTML = '<p>Error loading weather data. Please try again later.</p>';
       });
+  }
+
+  // Modal functionality
+  const modal = document.getElementById('team-modal');
+  const modalImage = document.getElementById('modal-image');
+  const modalName = document.getElementById('modal-name');
+  const modalBlurb = document.getElementById('modal-blurb');
+  const modalClose = document.getElementById('modal-close');
+
+  if (modal && modalImage && modalName && modalBlurb && modalClose) {
+    document.querySelectorAll('.team-box').forEach(box => {
+      box.addEventListener('click', () => {
+        console.log('Team box clicked:', box);
+        const name = box.getAttribute('data-name');
+        const blurb = box.getAttribute('data-blurb');
+        const image = box.getAttribute('data-image');
+        if (name && blurb && image) {
+          console.log('Modal data:', { name, blurb, image });
+          modalName.textContent = name;
+          modalBlurb.textContent = blurb;
+          modalImage.src = image;
+          modalImage.alt = name;
+          modal.style.display = 'flex';
+          modal.style.visibility = 'visible'; // Ensure visibility
+          modal.style.opacity = '1'; // Ensure opacity for visibility
+          modal.style.justifyContent = 'center'; // Ensure proper alignment
+          modal.style.alignItems = 'center';
+        } else {
+          console.error('Missing modal data attributes for:', box);
+        }
+      });
+    });
+
+    modalClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
   }
 });

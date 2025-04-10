@@ -93,16 +93,16 @@
     <!-- Team section -->
     <h2>About WaterLogged: Meet the Team</h2>
     <div class="team-container"> <!-- Grid container for team boxes -->
-      <div class="team-box" data-name="Charlie" data-blurb="Environmental concentration. Interested in coastal resilience and green development." data-image="images/charlie.webp" style="margin-bottom: 20px;">
+      <div class="team-box" data-name="Charlie" data-blurb="Environmental concentration. Interested in coastal resilience and green development." data-image="images/charlie.png" style="margin-bottom: 20px;">
         <picture>
-          <source srcset="images/charlie.webp" type="image/webp">
+          <source srcset="images/charlie.png" type="image/webp">
           <img src="images/charlie.png" alt="Charlie - Environmental concentration, interested in coastal resilience and green development" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
         </picture>
         <p style="text-align: center; margin-top: 5px; font-weight: bold;">Charlie</p>
       </div>
-      <div class="team-box" data-name="Annie" data-blurb="Environmental concentration. Interested in green infrastructure and environmental health." data-image="images/annie.webp" style="margin-bottom: 20px;">
+      <div class="team-box" data-name="Annie" data-blurb="Environmental concentration. Interested in green infrastructure and environmental health." data-image="images/annie.jpg" style="margin-bottom: 20px;">
         <picture>
-          <source srcset="images/annie.webp" type="image/webp">
+          <source srcset="images/annie.jpg" type="image/webp">
           <img src="images/annie.jpg" alt="Annie - Environmental concentration, interested in green infrastructure and environmental health" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
         </picture>
         <p style="text-align: center; margin-top: 5px; font-weight: bold;">Annie</p>
@@ -118,19 +118,6 @@
       <div class="team-box" data-name="Will" data-blurb="Environmental concentration. Interested in Biotech, BME, and Materials Science." data-image="images/will.png" style="margin-bottom: 20px;">
         <img src="images/will.png" alt="Will - Environmental concentration, interested in Biotech, BME, and Materials Science" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
         <p style="text-align: center; margin-top: 5px; font-weight: bold;">Will</p>
-      </div>
-    </div>
-
-    <!-- Additional team section -->
-    <h2>Meet the Team</h2>
-    <div class="team-container">
-      <div class="team-box">
-        <img src="images/charlie.jpg" alt="Photo of Charlie" onerror="this.src='images/fallback.jpg';">
-        <p>Charlie</p>
-      </div>
-      <div class="team-box">
-        <img src="images/annie.jpg" alt="Photo of Annie" onerror="this.src='images/fallback.jpg';">
-        <p>Annie</p>
       </div>
     </div>
   </main>
@@ -151,58 +138,31 @@
   </div>
 
   <!-- JavaScript for menu toggle and dark mode -->
-  <script defer src="/js/main.js"></script>
   <script>
-    document.getElementById('menu-button').addEventListener('click', () => {
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuButton = document.getElementById('menu-button');
         const menu = document.getElementById('menu');
-        menu.classList.toggle('hidden'); // Toggle the "hidden" class
-        if (menu.classList.contains('hidden')) {
-            menu.style.display = 'none'; // Hide menu
+        if (menuButton && menu) {
+            menuButton.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
+                menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
+            });
         } else {
-            menu.style.display = 'block'; // Show menu
+            console.error('Menu button or menu element not found.');
         }
-    });
 
-    // Dark mode toggle functionality
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode'); // Toggle dark mode on body
-      document.querySelectorAll('header, nav, .content-box, .team-box, .modal-content').forEach(el => {
-        el.classList.toggle('dark-mode'); // Toggle dark mode on relevant elements
-      });
-    });
-
-    // JavaScript for handling the modal
-    const modal = document.getElementById('team-modal');
-    const modalImage = document.getElementById('modal-image');
-    const modalName = document.getElementById('modal-name');
-    const modalBlurb = document.getElementById('modal-blurb');
-    const modalClose = document.getElementById('modal-close');
-
-    // Open modal on team box click
-    document.querySelectorAll('.team-box').forEach(box => {
-      box.addEventListener('click', () => {
-        const name = box.getAttribute('data-name');
-        const blurb = box.getAttribute('data-blurb');
-        const image = box.getAttribute('data-image'); // Get the image URL
-        modalName.textContent = name;
-        modalBlurb.textContent = blurb;
-        modalImage.src = image; // Set the image source
-        modalImage.alt = name; // Set the alt text for accessibility
-        modal.style.display = 'flex'; // Show modal
-      });
-    });
-
-    // Close modal on close button click
-    modalClose.addEventListener('click', () => {
-      modal.style.display = 'none'; // Hide modal
-    });
-
-    // Close modal on outside click
-    window.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none'; // Hide modal
-      }
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                document.querySelectorAll('header, nav, .content-box').forEach(el => {
+                    el.classList.toggle('dark-mode');
+                });
+            });
+        } else {
+            console.error('Dark mode toggle button not found.');
+        }
     });
   </script>
 </body>

@@ -99,63 +99,31 @@
   </footer>
 
   <!-- JavaScript for menu toggle and photo gallery -->
-  <script defer src="/js/main.js"></script>
   <script>
-    document.getElementById('menu-button').addEventListener('click', () => {
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuButton = document.getElementById('menu-button');
         const menu = document.getElementById('menu');
-        menu.classList.toggle('hidden'); // Toggle the "hidden" class
-        if (menu.classList.contains('hidden')) {
-            menu.style.display = 'none'; // Hide menu
+        if (menuButton && menu) {
+            menuButton.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
+                menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
+            });
         } else {
-            menu.style.display = 'block'; // Show menu
+            console.error('Menu button or menu element not found.');
         }
-    });
 
-    // Dark mode toggle functionality
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode'); // Toggle dark mode on body
-        document.querySelectorAll('header, nav, .content-box').forEach(el => {
-            el.classList.toggle('dark-mode'); // Toggle dark mode on relevant elements
-        });
-    });
-
-    // Interactive photo gallery functionality
-    const photos = [
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+1", fallback: "https://via.placeholder.com/600x400?text=Photo+1" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+2", fallback: "https://via.placeholder.com/600x400?text=Photo+2" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+3", fallback: "https://via.placeholder.com/600x400?text=Photo+3" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+4", fallback: "https://via.placeholder.com/600x400?text=Photo+4" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+5", fallback: "https://via.placeholder.com/600x400?text=Photo+5" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+6", fallback: "https://via.placeholder.com/600x400?text=Photo+6" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+7", fallback: "https://via.placeholder.com/600x400?text=Photo+7" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+8", fallback: "https://via.placeholder.com/600x400?text=Photo+8" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+9", fallback: "https://via.placeholder.com/600x400?text=Photo+9" },
-      { webp: "https://via.placeholder.com/600x400.webp?text=Photo+10", fallback: "https://via.placeholder.com/600x400?text=Photo+10" }
-    ];
-    let currentPhotoIndex = 0;
-
-    const galleryImageSource = document.getElementById('gallery-image-source');
-    const galleryImage = document.getElementById('gallery-image');
-    const photoCaption = document.getElementById('photo-caption');
-    const prevButton = document.getElementById('prev-button');
-    const nextButton = document.getElementById('next-button');
-
-    function updateGallery() {
-      galleryImageSource.srcset = photos[currentPhotoIndex].webp;
-      galleryImage.src = photos[currentPhotoIndex].fallback;
-      galleryImage.alt = `Photo ${currentPhotoIndex + 1}`;
-      photoCaption.textContent = `Photo ${currentPhotoIndex + 1} of ${photos.length}`;
-    }
-
-    prevButton.addEventListener('click', () => {
-      currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
-      updateGallery();
-    });
-
-    nextButton.addEventListener('click', () => {
-      currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
-      updateGallery();
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                document.querySelectorAll('header, nav, .content-box').forEach(el => {
+                    el.classList.toggle('dark-mode');
+                });
+            });
+        } else {
+            console.error('Dark mode toggle button not found.');
+        }
     });
   </script>
 </body>
