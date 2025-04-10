@@ -443,6 +443,85 @@ iframe[loading=lazy] {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
+/* Animations for explore page */
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.game-box:hover .preview-image {
+    animation: float 3s ease-in-out infinite;
+}
+
+.play-button:hover, .start-button:hover {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.question-box, .tutorial-steps, .experiment-steps {
+    animation: fadeSlideIn 0.5s ease-out;
+}
+
+.fun-fact {
+    transition: opacity 0.3s ease;
+}
+
+.experiment-preview {
+    transition: all 0.3s ease;
+}
+
+.experiment-preview:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Tutorial step transitions */
+.tutorial-content {
+    animation: fadeSlideIn 0.5s ease-out;
+}
+
+.nav-button {
+    transition: all 0.3s ease;
+    background-color: #00509e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background-color: #003f7f;
+    transform: scale(1.05);
+}
+
+/* Game animations */
+.correct-feedback, .incorrect-feedback {
+    animation: fadeSlideIn 0.5s ease-out;
+}
+
+.score-display {
+    transition: all 0.3s ease;
+}
+
 @media (max-width: 768px) {
   nav {
     flex-direction: column;
