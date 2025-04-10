@@ -57,6 +57,33 @@
       font-display: swap;
       src: url('https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc9.ttf') format('truetype');
     }
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      body {
+        padding: 0 10px; /* Add padding for smaller screens */
+      }
+      nav {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+      }
+      .toolbar-title {
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .subtitle {
+        font-size: 1.2rem; /* Adjust font size for smaller screens */
+        text-align: center;
+      }
+      main {
+        margin-top: 80px; /* Ensure content is not blocked by the toolbar */
+      }
+    }
+    @media (min-width: 769px) {
+      main {
+        margin-top: 60px; /* Standard spacing for larger screens */
+      }
+    }
   </style>
   <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
@@ -187,6 +214,19 @@
           });
         </script>
         <p><a href="https://www.openstreetmap.org/#map=15/42.3418/-71.1742" target="_blank">View Larger Map</a></p>
+    </div>
+
+    <!-- Team Section -->
+    <h2>Meet the Team</h2>
+    <div class="team-container">
+      <div class="team-box">
+        <img src="images/charlie.jpg" alt="Photo of Charlie" onerror="this.src='images/fallback.jpg';">
+        <p>Charlie</p>
+      </div>
+      <div class="team-box">
+        <img src="images/annie.jpg" alt="Photo of Annie" onerror="this.src='images/fallback.jpg';">
+        <p>Annie</p>
+      </div>
     </div>
   </main>
 

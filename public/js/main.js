@@ -19,4 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error fetching data:', e);
       dataContainer.innerHTML = '<p>Error fetching data. Please try again later.</p>';
     });
+
+  // Adjust main content margin dynamically
+  const nav = document.querySelector('nav');
+  const main = document.querySelector('main');
+  if (nav && main) {
+    const adjustMargin = () => {
+      const navHeight = nav.offsetHeight;
+      main.style.marginTop = `${navHeight}px`;
+    };
+    adjustMargin();
+    window.addEventListener('resize', adjustMargin);
+  }
 });
