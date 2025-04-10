@@ -33,13 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Hamburger menu toggle
-  const menuButton = document.getElementById('menu-button');
-  const menu = document.getElementById('menu');
+  const menuButton = document.getElementById('menu-button'); // This selects the button with the ID "menu-button".
+  const menu = document.getElementById('menu'); // This selects the unordered list (menu) with the ID "menu".
+
+  // Check if both elements exist
   if (menuButton && menu) {
+    // Add a click event listener to the hamburger button
     menuButton.addEventListener('click', () => {
-      const isHidden = menu.classList.toggle('hidden');
-      menu.setAttribute('aria-hidden', isHidden);
+      // Toggle the "hidden" class on the menu
+      const isHidden = menu.classList.toggle('hidden'); // Adds or removes the "hidden" class to show or hide the menu.
+
+      // Update the "aria-hidden" attribute for accessibility
+      menu.setAttribute('aria-hidden', isHidden); // Updates the "aria-hidden" attribute to reflect the visibility state of the menu.
     });
+  } else {
+    console.error('Error: Hamburger button or menu not found.'); // Logs an error if the button or menu is missing.
   }
 
   // Dark mode toggle

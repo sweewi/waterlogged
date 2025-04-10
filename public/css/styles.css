@@ -119,15 +119,13 @@ nav.dark-mode .toolbar-title {
 }
 
 #menu {
-  width: 150px;
-  padding: 10px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  display: none;
   position: absolute;
   top: 60px;
   left: 10px;
-  display: none;
-  animation: slideDown .5s ease-in-out;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
   list-style: none;
   z-index: 1000;
 }
