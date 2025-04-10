@@ -79,9 +79,55 @@
     <!-- Main content -->
     <main>
       <!-- Interactive Rainfall Visualization -->
-      <h2 id="rainfall-viz-heading">Interactive Rainfall Data</h2>
+      <h2 id="rainfall-viz-heading">Historical Rainfall Comparison</h2>
       <div class="content-box data-viz-box" aria-labelledby="rainfall-viz-heading">
-        <canvas id="rainfallChart"></canvas>
+        <h2>Interactive Rainfall Data</h2>
+        
+        <div class="viz-controls">
+          <div class="period-selector">
+            <div class="control-group">
+              <label for="currentPeriod">Current Period</label>
+              <select id="currentPeriod" class="control-select">
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="lastWeek">Last Week</option>
+                <option value="lastMonth">Last Month</option>
+              </select>
+            </div>
+            
+            <div class="control-group">
+              <label for="comparisonPeriod">Compare With</label>
+              <select id="comparisonPeriod" class="control-select">
+                <option value="yesterday">Yesterday</option>
+                <option value="lastWeek">Last Week</option>
+                <option value="lastMonth">Last Month</option>
+                <option value="lastYear">Last Year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="comparisonChart"></canvas>
+        </div>
+
+        <div class="comparison-stats">
+          <div class="stat-box">
+            <h4>Current Period</h4>
+            <p>Total Rainfall: <span id="currentTotal">-</span></p>
+            <p>Peak Rainfall: <span id="currentPeak">-</span></p>
+          </div>
+          <div class="stat-box">
+            <h4>Comparison Period</h4>
+            <p>Total Rainfall: <span id="comparisonTotal">-</span></p>
+            <p>Peak Rainfall: <span id="comparisonPeak">-</span></p>
+          </div>
+          <div class="stat-box">
+            <h4>Differences</h4>
+            <p>Total Difference: <span id="totalDiff">-</span></p>
+            <p>Peak Difference: <span id="peakDiff">-</span></p>
+          </div>
+        </div>
       </div>
 
       <!-- Weather Detective Game Section -->
@@ -133,6 +179,22 @@
   </footer>
 
   <!-- JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/js/rain-comparison.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Hamburger menu functionality
+      const menuButton = document.getElementById('menu-button');
+      const menu = document.getElementById('menu');
+      if (menuButton && menu) {
+        menuButton.addEventListener('click', () => {
+          menu.classList.toggle('hidden');
+          menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
+          menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
+        });
+      }
+    });
+  </script>
   <script src="js/main.js"></script>
   <script src="js/explore.js"></script>
 </body>

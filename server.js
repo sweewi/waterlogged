@@ -25,6 +25,11 @@ app.get('/photos.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'photos.html'));
 });
 
+// Serve Explore page
+app.get('/explore.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'explore.html'));
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

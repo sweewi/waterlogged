@@ -105,11 +105,11 @@
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self'; 
     img-src 'self' https:; 
-    script-src 'self' https://api.open-meteo.com 'unsafe-inline'; 
+    script-src 'self' https://cdn.jsdelivr.net https://api.open-meteo.com 'unsafe-inline'; 
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
     font-src 'self' https://fonts.gstatic.com; 
     frame-src https://www.openstreetmap.org; 
-    connect-src https://api.open-meteo.com;">
+    connect-src https://api.open-meteo.com https://api.thingspeak.com;">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
 </head>
 <body>
@@ -148,11 +148,60 @@
     <!-- Main content -->
     <main>
       <!-- WaterLogged Rain Data Section -->
-      <h2 id="rain-data-heading">WaterLogged Rain Data</h2> <!-- Added id for reference -->
-      <div class="content-box" aria-labelledby="rain-data-heading"> <!-- Added aria-labelledby -->
-          <p>Coming soon: A detailed graph displaying our rain data collected from the WaterLogged network.</p>
-          <div id="rain-data-placeholder" style="width: 100%; height: 300px; background-color: #f0f0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #555; font-size: 1.5rem; font-weight: bold;" role="img" aria-label="Graph placeholder for rain data">
-            Data Coming Soon
+      <h2 id="rain-data-heading">WaterLogged Rain Data</h2>
+      <div class="content-box" aria-labelledby="rain-data-heading">
+          <div id="rain-data-controls">
+              <div class="visualization-controls">
+                  <div class="time-range-selector">
+                      <label for="timeRange">Time Range:</label>
+                      <select id="timeRange" aria-label="Select time range for data visualization">
+                          <option value="1h">Last Hour</option>
+                          <option value="24h" selected>Last 24 Hours</option>
+                          <option value="7d">Last 7 Days</option>
+                          <option value="30d">Last 30 Days</option>
+                      </select>
+                  </div>
+                  <div class="data-type-selector">
+                      <label for="dataType">Data Type:</label>
+                      <select id="dataType" aria-label="Select type of data to display">
+                          <option value="rainfall">Rainfall Amount</option>
+                          <option value="rate">Rainfall Rate</option>
+                          <option value="cumulative">Cumulative Rainfall</option>
+                      </select>
+                  </div>
+                  <div class="view-type-selector">
+                      <label for="viewType">View Type:</label>
+                      <select id="viewType" aria-label="Select visualization type">
+                          <option value="line">Line Graph</option>
+                          <option value="bar">Bar Chart</option>
+                          <option value="area">Area Chart</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="stats-panel">
+                  <div class="stat-box">
+                      <span class="stat-label">Total Rainfall</span>
+                      <span id="total-rainfall" class="stat-value">--</span>
+                  </div>
+                  <div class="stat-box">
+                      <span class="stat-label">Peak Rate</span>
+                      <span id="peak-rate" class="stat-value">--</span>
+                  </div>
+                  <div class="stat-box">
+                      <span class="stat-label">Last Updated</span>
+                      <span id="last-updated" class="stat-value">--</span>
+                  </div>
+              </div>
+          </div>
+          <div id="rain-data-visualization">
+              <canvas id="rainDataChart"></canvas>
+          </div>
+          <div id="thingspeak-status" class="data-source-info">
+              <p>Data source: ThingSpeak API (Coming Soon)</p>
+              <div id="connection-status" class="status-indicator">
+                  <span class="status-dot"></span>
+                  <span class="status-text">Waiting for connection...</span>
+              </div>
           </div>
       </div>
 
@@ -251,5 +300,12 @@
         }
     });
   </script>
+
+  <!-- JavaScript dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/weather.js" type="module"></script>
+  <script src="js/rain-visualization.js"></script>
 </body>
 </html>

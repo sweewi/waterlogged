@@ -51,36 +51,54 @@ const gameQuestions = [
 
 let currentQuestionIndex = 0;
 
-// Add rainfall visualization code at the start of the file
+// Historical data exploration and comparison
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize rainfall visualization
-    initializeRainfallChart();
-    // Initialize other interactive elements
+    // Initialize main functionality
+    initializeComparisonChart();
     setupGameControls();
     setupTutorialControls();
     setupScienceCorner();
+
+    // Set up dark mode toggle
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            document.querySelectorAll('nav, .content-box, .game-box, .tutorial-box, .science-box').forEach(el => {
+                el.classList.toggle('dark-mode');
+            });
+            updateChartTheme();
+        });
+    }
 });
 
-// Rainfall Chart initialization
-function initializeRainfallChart() {
-    const ctx = document.getElementById('rainfallChart');
+// Comparison chart initialization
+function initializeComparisonChart() {
+    const ctx = document.getElementById('comparisonChart');
     if (!ctx) return;
 
-    const sampleData = generateSampleData();
-    const rainfallChart = new Chart(ctx, {
+    const comparisonChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: sampleData.labels,
-            datasets: [{
-                label: 'Rainfall (mm)',
-                data: sampleData.values,
-                borderColor: '#00509e',
-                backgroundColor: 'rgba(0, 80, 158, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
+            labels: [],
+            datasets: [
+                {
+                    label: 'Current Period',
+                    data: [],
+                    borderColor: '#00509e',
+                    backgroundColor: 'rgba(0, 80, 158, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Comparison Period',
+                    data: [],
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -93,7 +111,7 @@ function initializeRainfallChart() {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Rainfall Amount (mm)'
+                        text: 'Rainfall Amount (inches)'
                     }
                 },
                 x: {
@@ -106,103 +124,133 @@ function initializeRainfallChart() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Interactive Rainfall Data Explorer',
+                    text: 'Historical Rainfall Comparison',
                     font: { size: 16 }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `Rainfall: ${context.parsed.y}mm`;
-                        }
-                    }
                 }
-            },
-            animation: {
-                duration: 1000,
-                easing: 'easeInOutQuart'
             }
         }
     });
 
-    addChartControls(ctx, rainfallChart);
+    addComparisonControls(ctx, comparisonChart);
 }
 
-// Chart control functions
-function addChartControls(ctx, chart) {
+function addComparisonControls(ctx, chart) {
     const controlsContainer = document.createElement('div');
     controlsContainer.className = 'chart-controls';
-    controlsContainer.style.marginTop = '15px';
-    controlsContainer.style.textAlign = 'center';
 
-    // Add time range buttons
-    const timeRanges = ['24 Hours', '7 Days', '30 Days'];
-    timeRanges.forEach(range => {
-        const button = document.createElement('button');
-        button.textContent = range;
-        button.className = 'time-range-button';
-        button.onclick = () => updateTimeRange(range, chart);
-        controlsContainer.appendChild(button);
+    // Add comparison period selector
+    const periodDiv = document.createElement('div');
+    periodDiv.className = 'comparison-period-selector';
+    periodDiv.innerHTML = `
+        <div class="control-group">
+            <label>Current Period:</label>
+            <select id="currentPeriod" class="control-select">
+                <option value="today">Today</option>
+                <option value="thisWeek">This Week</option>
+                <option value="thisMonth">This Month</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>Compare With:</label>
+            <select id="comparisonPeriod" class="control-select">
+                <option value="yesterday">Yesterday</option>
+                <option value="lastWeek">Last Week</option>
+                <option value="lastMonth">Last Month</option>
+                <option value="lastYear">Same Period Last Year</option>
+            </select>
+        </div>
+    `;
+
+    controlsContainer.appendChild(periodDiv);
+    ctx.parentNode.insertBefore(controlsContainer, ctx.nextSibling);
+
+    // Add statistics display
+    const statsDiv = document.createElement('div');
+    statsDiv.className = 'comparison-stats';
+    statsDiv.innerHTML = `
+        <div class="stat-box">
+            <h4>Current Period</h4>
+            <p>Total: <span id="currentTotal">--</span></p>
+            <p>Peak: <span id="currentPeak">--</span></p>
+        </div>
+        <div class="stat-box">
+            <h4>Comparison Period</h4>
+            <p>Total: <span id="comparisonTotal">--</span></p>
+            <p>Peak: <span id="comparisonPeak">--</span></p>
+        </div>
+        <div class="stat-box">
+            <h4>Difference</h4>
+            <p>Total: <span id="totalDiff">--</span></p>
+            <p>Peak: <span id="peakDiff">--</span></p>
+        </div>
+    `;
+    ctx.parentNode.insertBefore(statsDiv, controlsContainer.nextSibling);
+
+    // Add event listeners
+    document.getElementById('currentPeriod').addEventListener('change', () => updateComparison(chart));
+    document.getElementById('comparisonPeriod').addEventListener('change', () => updateComparison(chart));
+
+    // Initial update
+    updateComparison(chart);
+}
+
+function updateComparison(chart) {
+    const currentPeriod = document.getElementById('currentPeriod').value;
+    const comparisonPeriod = document.getElementById('comparisonPeriod').value;
+
+    // Fetch data from the parent window's RainDataVisualization instance
+    const parentWindow = window.parent || window;
+    if (parentWindow.rainVisualization) {
+        const currentData = parentWindow.rainVisualization.getHistoricalData(currentPeriod);
+        const comparisonData = parentWindow.rainVisualization.getHistoricalData(comparisonPeriod);
+
+        updateChart(chart, currentData, comparisonData);
+        updateStatistics(currentData, comparisonData);
+    }
+}
+
+function updateChart(chart, currentData, comparisonData) {
+    // Update datasets
+    chart.data.labels = currentData.map(d => d.timestamp);
+    chart.data.datasets[0].data = currentData.map(d => d.rainfall);
+    chart.data.datasets[1].data = comparisonData.map(d => d.rainfall);
+    
+    // Update chart theme based on dark mode
+    updateChartTheme(chart);
+    
+    chart.update();
+}
+
+function updateChartTheme(chart) {
+    if (!chart) return;
+    
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    const textColor = isDarkMode ? '#e0e0e0' : '#333';
+
+    chart.options.scales.x.grid.color = gridColor;
+    chart.options.scales.y.grid.color = gridColor;
+    chart.options.scales.x.ticks.color = textColor;
+    chart.options.scales.y.ticks.color = textColor;
+    chart.options.plugins.legend.labels.color = textColor;
+    chart.update();
+}
+
+function updateStatistics(currentData, comparisonData) {
+    const calculateStats = (data) => ({
+        total: data.reduce((sum, d) => sum + d.rainfall, 0),
+        peak: Math.max(...data.map(d => d.rate))
     });
 
-    ctx.parentNode.insertBefore(controlsContainer, ctx.nextSibling);
-}
+    const current = calculateStats(currentData);
+    const comparison = calculateStats(comparisonData);
 
-// Helper function to generate sample data
-function generateSampleData() {
-    const now = new Date();
-    const labels = [];
-    const values = [];
-    
-    for (let i = 23; i >= 0; i--) {
-        const time = new Date(now - i * 3600000);
-        labels.push(time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-        const baseValue = Math.sin(i / 4) * 2 + 3;
-        const randomFactor = Math.random() * 2;
-        values.push(Math.max(0, baseValue + randomFactor).toFixed(1));
-    }
-
-    return { labels, values };
-}
-
-function updateTimeRange(range, chart) {
-    const now = new Date();
-    const labels = [];
-    const values = [];
-    let points;
-
-    switch (range) {
-        case '24 Hours':
-            points = 24;
-            for (let i = points - 1; i >= 0; i--) {
-                const time = new Date(now - i * 3600000);
-                labels.push(time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-                const baseValue = Math.sin(i / 4) * 2 + 3;
-                values.push(Math.max(0, baseValue + Math.random() * 2).toFixed(1));
-            }
-            break;
-        case '7 Days':
-            points = 7;
-            for (let i = points - 1; i >= 0; i--) {
-                const date = new Date(now - i * 86400000);
-                labels.push(date.toLocaleDateString([], { weekday: 'short' }));
-                const baseValue = Math.sin(i / 2) * 5 + 7;
-                values.push(Math.max(0, baseValue + Math.random() * 4).toFixed(1));
-            }
-            break;
-        case '30 Days':
-            points = 30;
-            for (let i = points - 1; i >= 0; i--) {
-                const date = new Date(now - i * 86400000);
-                labels.push(date.toLocaleDateString([], { day: 'numeric', month: 'short' }));
-                const baseValue = Math.sin(i / 5) * 8 + 10;
-                values.push(Math.max(0, baseValue + Math.random() * 6).toFixed(1));
-            }
-            break;
-    }
-
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = values;
-    chart.update();
+    document.getElementById('currentTotal').textContent = `${current.total.toFixed(2)} in`;
+    document.getElementById('currentPeak').textContent = `${current.peak.toFixed(2)} in/hr`;
+    document.getElementById('comparisonTotal').textContent = `${comparison.total.toFixed(2)} in`;
+    document.getElementById('comparisonPeak').textContent = `${comparison.peak.toFixed(2)} in/hr`;
+    document.getElementById('totalDiff').textContent = `${(current.total - comparison.total).toFixed(2)} in`;
+    document.getElementById('peakDiff').textContent = `${(current.peak - comparison.peak).toFixed(2)} in/hr`;
 }
 
 // Tutorial functions
