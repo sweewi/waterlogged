@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const menu = document.getElementById('menu');
   if (menuButton && menu) {
     menuButton.addEventListener('click', () => {
+      console.log('Hamburger menu button clicked.');
       menu.classList.toggle('hidden');
       menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
       menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
@@ -50,8 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const darkModeToggle = document.getElementById('dark-mode-toggle');
   if (darkModeToggle) {
     darkModeToggle.addEventListener('click', () => {
+      console.log('Dark mode toggle button clicked.');
       document.body.classList.toggle('dark-mode');
-      document.querySelectorAll('header, nav, .content-box').forEach(el => {
+      document.querySelectorAll('header, nav, .content-box, .team-box, .modal-content').forEach(el => {
         el.classList.toggle('dark-mode');
       });
     });
