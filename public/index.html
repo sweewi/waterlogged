@@ -131,88 +131,91 @@
     <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">Dark Mode</button>
   </nav>
 
-  <!-- Subtitle blurb -->
-  <p class="subtitle" style="font-family: 'Roboto', sans-serif; font-size: 1.5rem; font-weight: 400; text-align: center; color: #555; margin: 20px auto; max-width: 600px;">
-    Building a Localized Rain Gauge Network for Community Science.
-  </p>
-  <script>
-    // Ensure font is applied as soon as it's available
-    document.fonts.ready.then(() => {
-      document.querySelector('.subtitle').style.visibility = 'visible';
-    });
-  </script>
+  <div class="page-container">
+    <!-- Subtitle blurb -->
+    <p class="subtitle">
+      Building a Localized Rain Gauge Network for Community Science.
+    </p>
 
-  <!-- Main content -->
-  <main>
-    <!-- WaterLogged Rain Data Section -->
-    <h2 id="rain-data-heading">WaterLogged Rain Data</h2> <!-- Added id for reference -->
-    <div class="content-box" aria-labelledby="rain-data-heading"> <!-- Added aria-labelledby -->
-        <p>Coming soon: A detailed graph displaying our rain data collected from the WaterLogged network.</p>
-        <div id="rain-data-placeholder" style="width: 100%; height: 300px; background-color: #f0f0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #555; font-size: 1.5rem; font-weight: bold;" role="img" aria-label="Graph placeholder for rain data">
-          Data Coming Soon
-        </div>
-    </div>
+    <script>
+      // Ensure font is applied as soon as it's available
+      document.fonts.ready.then(() => {
+        document.querySelector('.subtitle').style.visibility = 'visible';
+      });
+    </script>
 
-    <!-- Live Weather Tracker Section -->
-    <h2 id="weather-tracker-heading">Live Weather Tracker</h2> <!-- Added id for reference -->
-    <div class="content-box" aria-labelledby="weather-tracker-heading"> <!-- Added aria-labelledby -->
-        <p>Check the current weather conditions in your area:</p>
-        <div id="weather-container" style="text-align: center;">
-            <p id="weather-loading" role="status" aria-live="polite">Loading weather data...</p> <!-- Added role and aria-live -->
-            <p id="weather-data" style="display: none;">
-                <strong>Location:</strong> <span id="weather-location"></span><br>
-                <strong>Temperature:</strong> <span id="weather-temperature"></span>°F<br>
-                <strong>Condition:</strong> <span id="weather-condition"></span>
-            </p>
-            <p id="weather-source" style="font-size: 0.9rem; color: #555; margin-top: 10px;">
-                Source: <a href="https://open-meteo.com/" target="_blank" aria-label="Visit Open-Meteo website">Open-Meteo</a>
-            </p>
-        </div>
-    </div>
+    <!-- Main content -->
+    <main>
+      <!-- WaterLogged Rain Data Section -->
+      <h2 id="rain-data-heading">WaterLogged Rain Data</h2> <!-- Added id for reference -->
+      <div class="content-box" aria-labelledby="rain-data-heading"> <!-- Added aria-labelledby -->
+          <p>Coming soon: A detailed graph displaying our rain data collected from the WaterLogged network.</p>
+          <div id="rain-data-placeholder" style="width: 100%; height: 300px; background-color: #f0f0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #555; font-size: 1.5rem; font-weight: bold;" role="img" aria-label="Graph placeholder for rain data">
+            Data Coming Soon
+          </div>
+      </div>
 
-    <!-- Interactive Map Section -->
-    <h2>Rain Gauge Locations</h2>
-    <div class="content-box">
-        <p>Explore the locations of our rain gauges on the map below:</p>
-        <div id="map-container" style="width: 100%; height: 400px; border-radius: 10px; overflow: hidden;">
-          <picture>
-            <source srcset="images/map-placeholder.webp" type="image/webp">
-            <img src="images/map-placeholder.png" alt="Static map showing rain gauge locations" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='images/fallback.png';">
-          </picture>
-          <noscript>
-            <iframe 
-              src="https://www.openstreetmap.org/export/embed.html?bbox=-71.1912%2C42.3317%2C-71.1573%2C42.3519&layer=mapnik" 
-              style="width: 100%; height: 100%; border: none;" 
-              allowfullscreen 
-              loading="lazy" 
-              title="Interactive map showing rain gauge locations">
-            </iframe>
-          </noscript>
-        </div>
-        <script defer>
-          document.addEventListener('DOMContentLoaded', () => {
-            const mapContainer = document.getElementById('map-container');
-            const observer = new IntersectionObserver((entries) => {
-              if (entries[0].isIntersecting) {
-                const iframe = document.createElement('iframe');
-                iframe.src = "https://www.openstreetmap.org/export/embed.html?bbox=-71.1912%2C42.3317%2C-71.1573%2C42.3519&layer=mapnik";
-                iframe.style.width = "100%";
-                iframe.style.height = "100%";
-                iframe.style.border = "none";
-                iframe.allowFullscreen = true;
-                iframe.loading = "lazy";
-                iframe.title = "Interactive map showing rain gauge locations";
-                mapContainer.innerHTML = ''; // Clear the static map
-                mapContainer.appendChild(iframe);
-                observer.disconnect(); // Stop observing once the iframe is loaded
-              }
+      <!-- Live Weather Tracker Section -->
+      <h2 id="weather-tracker-heading">Live Weather Tracker</h2> <!-- Added id for reference -->
+      <div class="content-box" aria-labelledby="weather-tracker-heading"> <!-- Added aria-labelledby -->
+          <p>Check the current weather conditions in your area:</p>
+          <div id="weather-container" style="text-align: center;">
+              <p id="weather-loading" role="status" aria-live="polite">Loading weather data...</p> <!-- Added role and aria-live -->
+              <p id="weather-data" style="display: none;">
+                  <strong>Location:</strong> <span id="weather-location"></span><br>
+                  <strong>Temperature:</strong> <span id="weather-temperature"></span>°F<br>
+                  <strong>Condition:</strong> <span id="weather-condition"></span>
+              </p>
+              <p id="weather-source" style="font-size: 0.9rem; color: #555; margin-top: 10px;">
+                  Source: <a href="https://open-meteo.com/" target="_blank" aria-label="Visit Open-Meteo website">Open-Meteo</a>
+              </p>
+          </div>
+      </div>
+
+      <!-- Interactive Map Section -->
+      <h2>Rain Gauge Locations</h2>
+      <div class="content-box">
+          <p>Explore the locations of our rain gauges on the map below:</p>
+          <div id="map-container" style="width: 100%; height: 400px; border-radius: 10px; overflow: hidden;">
+            <picture>
+              <source srcset="images/map-placeholder.webp" type="image/webp">
+              <img src="images/map-placeholder.png" alt="Static map showing rain gauge locations" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='images/fallback.png';">
+            </picture>
+            <noscript>
+              <iframe 
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-71.1912%2C42.3317%2C-71.1573%2C42.3519&layer=mapnik" 
+                style="width: 100%; height: 100%; border: none;" 
+                allowfullscreen 
+                loading="lazy" 
+                title="Interactive map showing rain gauge locations">
+              </iframe>
+            </noscript>
+          </div>
+          <script defer>
+            document.addEventListener('DOMContentLoaded', () => {
+              const mapContainer = document.getElementById('map-container');
+              const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                  const iframe = document.createElement('iframe');
+                  iframe.src = "https://www.openstreetmap.org/export/embed.html?bbox=-71.1912%2C42.3317%2C-71.1573%2C42.3519&layer=mapnik";
+                  iframe.style.width = "100%";
+                  iframe.style.height = "100%";
+                  iframe.style.border = "none";
+                  iframe.allowFullscreen = true;
+                  iframe.loading = "lazy";
+                  iframe.title = "Interactive map showing rain gauge locations";
+                  mapContainer.innerHTML = ''; // Clear the static map
+                  mapContainer.appendChild(iframe);
+                  observer.disconnect(); // Stop observing once the iframe is loaded
+                }
+              });
+              observer.observe(mapContainer);
             });
-            observer.observe(mapContainer);
-          });
-        </script>
-        <p><a href="https://www.openstreetmap.org/#map=15/42.3418/-71.1742" target="_blank">View Larger Map</a></p>
-    </div>
-  </main>
+          </script>
+          <p><a href="https://www.openstreetmap.org/#map=15/42.3418/-71.1742" target="_blank">View Larger Map</a></p>
+      </div>
+    </main>
+  </div>
 
   <!-- Contact footer -->
   <footer>

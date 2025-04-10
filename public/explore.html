@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore - Waterlogged</title>
+  <style>
+    /* Critical CSS for above-the-fold content */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #add8e6;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      height: 60px;
+      backdrop-filter: blur(10px);
+    }
+    .subtitle {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      text-align: center;
+      color: #555;
+      margin: 80px auto 40px;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+  </style>
+  <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
+  <meta name="description" content="Explore interactive weather games and activities with WaterLogged. Learn about rainfall, weather patterns, and climate science through engaging games.">
+  <meta name="keywords" content="WaterLogged, weather games, educational activities, rain gauge, community science, climate education">
+  <meta name="author" content="WaterLogged Team">
+</head>
+<body>
+  <!-- Navigation menu -->
+  <nav>
+    <div id="menu-container">
+      <button id="menu-button" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <ul id="menu" class="hidden" aria-hidden="true">
+      <li><a href="index.html" aria-label="Go to Home page">Home</a></li>
+      <li><a href="about.html" aria-label="Go to About page">About</a></li>
+      <li><a href="photos.html" aria-label="Go to Photos page">Photos</a></li>
+      <li><a href="explore.html" aria-label="Go to Explore page">Explore</a></li>
+    </ul>
+    <span class="toolbar-title" aria-hidden="true">WATERLOGGED</span>
+    <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">Dark Mode</button>
+  </nav>
+
+  <div class="page-container">
+    <!-- Subtitle blurb -->
+    <p class="subtitle">
+      Discover the World of Weather Through Interactive Learning
+    </p>
+
+    <!-- Main content -->
+    <main>
+      <!-- Weather Detective Game Section -->
+      <h2 id="weather-detective-heading">Weather Detective</h2>
+      <div class="content-box game-box" aria-labelledby="weather-detective-heading">
+        <div class="game-preview">
+          <img src="images/weather-detective-preview.png" alt="Weather Detective Game Preview" class="preview-image">
+          <h3>Test Your Weather Knowledge!</h3>
+          <p>Make predictions, solve weather mysteries, and learn about rainfall patterns in this interactive game.</p>
+          <button class="play-button" onclick="startWeatherDetective()">Play Now</button>
+        </div>
+      </div>
+
+      <!-- Build Your Own Rain Gauge Tutorial -->
+      <h2 id="diy-gauge-heading">Build Your Own Rain Gauge</h2>
+      <div class="content-box tutorial-box" aria-labelledby="diy-gauge-heading">
+        <div class="tutorial-steps">
+          <h3>Create Your Own Weather Station!</h3>
+          <p>Follow our interactive guide to build and calibrate your own rain gauge.</p>
+          <div class="step-preview">
+            <div class="step-indicator">Step 1 of 5</div>
+            <button class="start-button" onclick="startTutorial()">Start Tutorial</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weather Science Corner -->
+      <h2 id="science-corner-heading">Weather Science Corner</h2>
+      <div class="content-box science-box" aria-labelledby="science-corner-heading">
+        <div class="science-content">
+          <h3>Explore Weather Phenomena</h3>
+          <div id="fact-display">
+            <p class="fun-fact">Did you know? A single raindrop falls at an average speed of 14 miles per hour!</p>
+          </div>
+          <button class="next-fact-button" onclick="showNextFact()">Show Another Fact</button>
+          <div class="experiment-preview">
+            <h4>Today's Experiment</h4>
+            <p>Create your own water cycle in a bag!</p>
+            <button class="view-experiment-button" onclick="viewExperiment()">View Instructions</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Contact footer -->
+  <footer>
+    Learn more about <a href="https://www.bc.edu/bc-web/schools/morrissey/departments/engineering.html" target="_blank">Boston College Human-Centered Engineering</a>.
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/main.js"></script>
+  <script src="js/explore.js"></script>
+</body>
+</html>

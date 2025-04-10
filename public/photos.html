@@ -73,25 +73,29 @@
     <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">Dark Mode</button> <!-- Dark mode toggle button -->
   </nav>
 
-  <!-- Subtitle blurb -->
-  <p class="subtitle">Building a Localized Rain Gauge Network for Community Science.</p>
+  <div class="page-container">
+    <!-- Subtitle blurb -->
+    <p class="subtitle">
+      Building a Localized Rain Gauge Network for Community Science.
+    </p>
 
-  <!-- Main content -->
-  <main style="margin-top: 10px;"> <!-- Add margin to push content below the toolbar -->
-    <!-- Photo gallery section -->
-    <h2 id="photo-gallery-heading">Photo Gallery</h2> <!-- Added id for reference -->
-    <div class="content-box" aria-labelledby="photo-gallery-heading"> <!-- Added aria-labelledby -->
-      <div id="photo-gallery" class="gallery-container" role="region" aria-label="Photo gallery"> <!-- Added role and aria-label -->
-        <button id="prev-button" aria-label="Previous Photo">&lt;</button> <!-- Added aria-label -->
-        <picture>
-          <source id="gallery-image-source" srcset="https://via.placeholder.com/600x400.webp?text=Photo+1" type="image/webp">
-          <img id="gallery-image" src="https://via.placeholder.com/600x400?text=Photo+1" alt="Photo 1">
-        </picture>
-        <button id="next-button" aria-label="Next Photo">&gt;</button> <!-- Added aria-label -->
+    <!-- Main content -->
+    <main>
+      <!-- Photo gallery section -->
+      <h2 id="photo-gallery-heading">Photo Gallery</h2>
+      <div class="content-box" aria-labelledby="photo-gallery-heading">
+        <div id="photo-gallery" class="gallery-container" role="region" aria-label="Photo gallery"> <!-- Added role and aria-label -->
+          <button id="prev-button" aria-label="Previous Photo">&lt;</button> <!-- Added aria-label -->
+          <picture>
+            <source id="gallery-image-source" srcset="https://via.placeholder.com/600x400.webp?text=Photo+1" type="image/webp">
+            <img id="gallery-image" src="https://via.placeholder.com/600x400?text=Photo+1" alt="Photo 1">
+          </picture>
+          <button id="next-button" aria-label="Next Photo">&gt;</button> <!-- Added aria-label -->
+        </div>
+        <p id="photo-caption" aria-live="polite">Photo 1 of 10</p> <!-- Added aria-live -->
       </div>
-      <p id="photo-caption" aria-live="polite">Photo 1 of 10</p> <!-- Added aria-live -->
-    </div>
-  </main>
+    </main>
+  </div>
 
   <!-- Contact footer -->
   <footer>

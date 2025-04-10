@@ -19,8 +19,10 @@ body.dark-mode {
 }
 
 header {
+  width: 100%;
   text-align: center;
-  margin-top: 100px;
+  padding-top: 80px;
+  margin-bottom: 20px;
   transition: background-color .3s ease, color .3s ease;
 }
 
@@ -46,14 +48,24 @@ header.dark-mode p {
   color: #b0b0b0;
 }
 
+.page-container {
+  padding-top: 60px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .subtitle {
   font-family: 'Roboto', sans-serif;
   font-size: 1.5rem;
   font-weight: 400;
   text-align: center; /* Ensure text is centered */
   color: #555;
-  margin: 20px auto;
-  max-width: 600px;
+  margin: 80px auto 40px;
+  max-width: 800px;
+  padding: 0 20px; /* Added horizontal padding for better mobile display */
+  opacity: 1;
+  visibility: visible;
 }
 
 subtitle.dark-mode {
@@ -174,7 +186,8 @@ main {
   flex: 1;
   width: 100%;
   max-width: 1200px; /* Limit content width on larger screens */
-  padding: 20px;
+  padding: 0 20px 40px;
+  margin-top: 80px; /* Increased margin to prevent content from being hidden under nav */
   box-sizing: border-box;
 }
 
@@ -246,20 +259,35 @@ content-box.dark-mode {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 .modal-content {
+  position: relative;
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   text-align: center;
   max-width: 500px;
   width: 90%;
+  transform: scale(0.7);
+  transition: transform 0.3s ease;
+}
+
+.modal.active .modal-content {
+  transform: scale(1);
 }
 
 .modal img {
@@ -270,14 +298,17 @@ content-box.dark-mode {
 }
 
 .modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #333;
-  cursor: pointer;
   position: absolute;
   top: 10px;
   right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  z-index: 2001;
 }
 
 #dark-mode-toggle {
@@ -328,6 +359,90 @@ iframe[loading=lazy] {
   background-color: #e0e0e0;
 }
 
+/* Explore page styles */
+.game-box, .tutorial-box, .science-box {
+  margin-bottom: 40px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-box:hover, .tutorial-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.preview-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.play-button, .start-button, .next-fact-button, .view-experiment-button {
+  background-color: #00509e;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin: 15px 0;
+}
+
+.play-button:hover, .start-button:hover, .next-fact-button:hover, .view-experiment-button:hover {
+  background-color: #003f7f;
+  transform: scale(1.05);
+}
+
+.play-button:active, .start-button:active, .next-fact-button:active, .view-experiment-button:active {
+  transform: scale(0.95);
+}
+
+.game-preview, .tutorial-steps, .science-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.step-indicator {
+  background-color: rgba(0, 80, 158, 0.1);
+  padding: 8px 16px;
+  border-radius: 15px;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+.fun-fact {
+  font-style: italic;
+  color: #555;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.experiment-preview {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: rgba(0, 80, 158, 0.05);
+  border-radius: 8px;
+}
+
+/* Dark mode styles for explore page */
+.dark-mode .game-box,
+.dark-mode .tutorial-box,
+.dark-mode .science-box {
+  background-color: #1e1e1e;
+}
+
+.dark-mode .fun-fact {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+}
+
+.dark-mode .experiment-preview {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 @media (max-width: 768px) {
   nav {
     flex-direction: column;
@@ -336,6 +451,7 @@ iframe[loading=lazy] {
 
   .subtitle {
     font-size: 1.2rem; /* Adjust font size for smaller screens */
+    margin: 70px auto 30px;
   }
 
   nav {
@@ -403,6 +519,19 @@ iframe[loading=lazy] {
 
   footer {
     font-size: .9rem;
+    padding: 15px;
+  }
+
+  main {
+    padding: 0 15px 30px;
+  }
+
+  .play-button, .start-button, .next-fact-button, .view-experiment-button {
+    width: 100%;
+    margin: 10px 0;
+  }
+  
+  .game-preview, .tutorial-steps, .science-content {
     padding: 15px;
   }
 }
