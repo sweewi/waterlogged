@@ -115,8 +115,8 @@
 <body>
   <!-- Navigation menu -->
   <nav>
-    <div id="menu-container">
-      <button id="menu-button" aria-label="Toggle navigation menu">
+    <div id="menu-container" style="position: relative; z-index: 1100;"> <!-- Ensure menu-container is above other elements -->
+      <button id="menu-button" aria-label="Toggle navigation menu" aria-expanded="false">
         <span></span>
         <span></span>
         <span></span>
@@ -224,19 +224,5 @@
 
   <!-- JavaScript for menu toggle and dark mode -->
   <script defer src="/js/main.js"></script>
-  <script defer>
-    document.addEventListener('DOMContentLoaded', () => {
-      const weatherContainer = document.getElementById('weather-container');
-      if (weatherContainer) {
-        import('/js/weather.js')
-          .then(module => {
-            module.fetchWeather();
-          })
-          .catch(err => {
-            console.error('Error loading weather script:', err);
-          });
-      }
-    });
-  </script>
 </body>
 </html>

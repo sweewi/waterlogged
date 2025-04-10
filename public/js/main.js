@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOMContentLoaded event fired.');
+
   const dataContainer = document.getElementById('data-container');
   if (!dataContainer) {
     console.error('Error: #data-container element not found.');
@@ -36,23 +38,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuButton = document.getElementById('menu-button');
   const menu = document.getElementById('menu');
   if (menuButton && menu) {
-    console.log('Hamburger button and menu found. Adding event listener.');
+    console.log('Menu button and menu found. Adding event listener.');
     menuButton.addEventListener('click', () => {
-      const isHidden = menu.classList.toggle('hidden');
-      menu.setAttribute('aria-hidden', isHidden);
-      console.log(`Menu is now ${isHidden ? 'hidden' : 'visible'}.`);
+      console.log('Menu button clicked.');
+      menu.classList.toggle('hidden');
+      menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
+      menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
     });
   } else {
-    console.error('Error: Hamburger button or menu not found.');
+    console.error('Menu button or menu element not found.');
   }
 
   // Dark mode toggle
   const darkModeToggle = document.getElementById('dark-mode-toggle');
   if (darkModeToggle) {
+    console.log('Dark mode toggle button found. Adding event listener.');
     darkModeToggle.addEventListener('click', () => {
+      console.log('Dark mode toggle clicked.');
       document.body.classList.toggle('dark-mode');
       menu.classList.toggle('dark-mode');
+      console.log('Dark mode toggled.');
     });
+    console.log('Event listener for dark-mode-toggle attached successfully.');
+  } else {
+    console.error('Error: Dark mode toggle button not found.');
   }
 
   // Weather data fetch

@@ -96,12 +96,12 @@ nav.dark-mode .toolbar-title {
 #menu-button {
   background: none;
   border: none;
-  cursor: pointer;
+  cursor: pointer; /* Ensure the button is clickable */
   display: flex;
   flex-direction: column;
   gap: 5px;
   padding: 10px;
-  z-index: 1100;
+  z-index: 1100; /* Ensure the button is above other elements */
   position: relative;
 }
 
@@ -112,6 +112,14 @@ nav.dark-mode .toolbar-title {
   background-color: #00509e;
   border-radius: 2px;
   transition: background-color 0.3s ease;
+}
+
+#menu-button:hover {
+  opacity: 0.8; /* Add hover effect for better feedback */
+}
+
+#menu-button:active {
+  transform: scale(0.95); /* Add active effect for better feedback */
 }
 
 #menu-button.dark-mode span {
@@ -132,6 +140,10 @@ nav.dark-mode .toolbar-title {
 
 #menu.hidden {
   display: none;
+}
+
+.hidden {
+  display: none !important;
 }
 
 #menu.dark-mode {
@@ -254,7 +266,7 @@ content-box.dark-mode {
   overflow: hidden;
 }
 
-.modal-content img {
+modal-content img {
   width: auto;
   height: 90vh;
   max-width: 90vw;
