@@ -108,18 +108,22 @@ document.addEventListener('DOMContentLoaded', () => {
           modal.style.opacity = '1'; // Ensure opacity for visibility
           modal.style.justifyContent = 'center'; // Ensure proper alignment
           modal.style.alignItems = 'center';
+          console.log('Modal should now be visible.');
         } else {
           console.error('Missing modal data attributes for:', box);
         }
       });
     });
 
+    // Add a debug log to check modal visibility on click
     modalClose.addEventListener('click', () => {
+      console.log('Modal close button clicked.');
       modal.style.display = 'none';
     });
 
     window.addEventListener('click', (e) => {
       if (e.target === modal) {
+        console.log('Clicked outside modal. Closing modal.');
         modal.style.display = 'none';
       }
     });
