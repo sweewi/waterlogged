@@ -3,10 +3,10 @@ Description=WaterLogged Serial Communication Handler
 After=network.target waterlogged.service
 
 [Service]
-User=pi
-WorkingDirectory=/home/pi/waterlogged
-Environment="PATH=/home/pi/waterlogged/venv/bin"
-ExecStart=/home/pi/waterlogged/venv/bin/python3 serial_handler.py
+User=SIP
+WorkingDirectory=/home/SIP/waterlogged/raspberrypi
+Environment="PATH=/home/SIP/waterlogged/raspberrypi/venv/bin"
+ExecStart=/home/SIP/waterlogged/raspberrypi/venv/bin/python3 serial_handler.py
 Restart=always
 RestartSec=5
 
