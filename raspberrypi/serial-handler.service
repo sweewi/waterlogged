@@ -1,0 +1,14 @@
+[Unit]
+Description=WaterLogged Serial Communication Handler
+After=network.target waterlogged.service
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/waterlogged
+Environment="PATH=/home/pi/waterlogged/venv/bin"
+ExecStart=/home/pi/waterlogged/venv/bin/python3 serial_handler.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
