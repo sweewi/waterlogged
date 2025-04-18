@@ -4,3 +4,6 @@ pydantic>=1.8.0,<2.0.0
 SQLAlchemy>=1.4.23,<1.5.0
 python-dotenv>=0.19.0,<0.20.0
 requests>=2.26.0,<3.0.0
+pyserial>=3.5,<4.0.0  # For serial communication with Arduino
+aiosqlite>=0.17.0     # Async SQLite support
+python-multipart      # For handling form data
