@@ -1,249 +1,223 @@
-// Rain data visualization and ThingSpeak integration
-class RainDataVisualization {
-    constructor() {
-        this.chart = null;
-        this.timeRange = '24h';
-        this.dataType = 'rainfall';
-        this.viewType = 'line';
-        this.thingSpeakConfig = {
-            channelId: '', // Add your channel ID here
-            readApiKey: '', // Add your read API key here
-            fields: {
-                rainfall: 1,
-                rate: 2
+// API endpoints
+const API_BASE_URL = 'http://localhost:8000';
+const API_ENDPOINTS = {
+    hourly: `${API_BASE_URL}/data/hourly`,
+    daily: `${API_BASE_URL}/data/daily`,
+    current: `${API_BASE_URL}/data/current`
+};
+
+// Chart configuration
+const chartConfig = {
+    type: 'bar',
+    options: {
+        responsive: true,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
+        plugins: {
+            title: {
+                display: true,
+                text: 'Rainfall Data'
             },
-            baseUrl: 'https://api.thingspeak.com'
-        };
-        this.initializeControls();
-        this.initializeChart();
-        this.setupEventListeners();
-        this.connectToThingSpeak();
-    }
-
-    initializeControls() {
-        this.timeRangeSelect = document.getElementById('timeRange');
-        this.dataTypeSelect = document.getElementById('dataType');
-        this.viewTypeSelect = document.getElementById('viewType');
-        this.totalRainfallElement = document.getElementById('total-rainfall');
-        this.peakRateElement = document.getElementById('peak-rate');
-        this.lastUpdatedElement = document.getElementById('last-updated');
-        this.statusDot = document.querySelector('.status-dot');
-        this.statusText = document.querySelector('.status-text');
-    }
-
-    setupEventListeners() {
-        this.timeRangeSelect.addEventListener('change', () => this.updateVisualization());
-        this.dataTypeSelect.addEventListener('change', () => this.updateVisualization());
-        this.viewTypeSelect.addEventListener('change', () => this.updateVisualization());
-    }
-
-    initializeChart() {
-        const ctx = document.getElementById('rainDataChart').getContext('2d');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const textColor = isDarkMode ? '#e0e0e0' : '#333';
-
-        this.chart = new Chart(ctx, {
-            type: this.viewType,
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Rainfall',
-                    data: [],
-                    borderColor: '#00509e',
-                    backgroundColor: 'rgba(0, 80, 158, 0.2)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'hour'
-                        },
-                        grid: {
-                            color: gridColor
-                        },
-                        ticks: {
-                            color: textColor
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
                         }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: gridColor
-                        },
-                        ticks: {
-                            color: textColor
+                        if (context.parsed.y !== null) {
+                            label += context.parsed.y.toFixed(2);
+                            if (context.dataset.unit) {
+                                label += context.dataset.unit;
+                            }
                         }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: textColor
-                        }
+                        return label;
                     }
                 }
             }
-        });
-    }
-
-    updateVisualization(data = this.sampleData) {
-        this.timeRange = this.timeRangeSelect.value;
-        this.dataType = this.dataTypeSelect.value;
-        this.viewType = this.viewTypeSelect.value;
-
-        // Update chart type if changed
-        this.chart.config.type = this.viewType;
-
-        // Filter data based on time range
-        const filteredData = this.filterDataByTimeRange(data, this.timeRange);
-        
-        // Update chart data
-        this.chart.data.labels = filteredData.map(d => d.timestamp);
-        this.chart.data.datasets[0].data = filteredData.map(d => 
-            this.dataType === 'rainfall' ? d.rainfall :
-            this.dataType === 'rate' ? d.rate :
-            this.calculateCumulative(filteredData, d)
-        );
-
-        this.chart.data.datasets[0].label = this.getDataTypeLabel();
-        
-        // Update statistics
-        this.updateStatistics(filteredData);
-        
-        this.chart.update();
-    }
-
-    filterDataByTimeRange(data, range) {
-        const now = new Date();
-        const rangeInHours = {
-            '1h': 1,
-            '24h': 24,
-            '7d': 168,
-            '30d': 720
-        }[range];
-
-        return data.filter(d => 
-            d.timestamp >= new Date(now - rangeInHours * 3600000)
-        );
-    }
-
-    calculateCumulative(data, currentPoint) {
-        const index = data.findIndex(d => d.timestamp === currentPoint.timestamp);
-        return data
-            .slice(0, index + 1)
-            .reduce((sum, d) => sum + d.rainfall, 0);
-    }
-
-    getDataTypeLabel() {
-        return {
-            'rainfall': 'Rainfall (inches)',
-            'rate': 'Rainfall Rate (in/hr)',
-            'cumulative': 'Cumulative Rainfall (inches)'
-        }[this.dataType];
-    }
-
-    updateStatistics(data) {
-        const total = data.reduce((sum, d) => sum + d.rainfall, 0);
-        const peak = Math.max(...data.map(d => d.rate));
-        const lastUpdate = data[data.length - 1]?.timestamp;
-
-        this.totalRainfallElement.textContent = `${total.toFixed(2)} in`;
-        this.peakRateElement.textContent = `${peak.toFixed(2)} in/hr`;
-        this.lastUpdatedElement.textContent = lastUpdate ? 
-            new Date(lastUpdate).toLocaleTimeString() : '--';
-    }
-
-    async connectToThingSpeak() {
-        this.statusDot.classList.remove('connected', 'error');
-        this.statusText.textContent = 'Connecting to ThingSpeak...';
-
-        try {
-            const data = await this.fetchThingSpeakData();
-            if (data) {
-                this.statusDot.classList.add('connected');
-                this.statusText.textContent = 'Connected to ThingSpeak';
-                this.updateVisualization(data);
-            } else {
-                throw new Error('No data received');
+        },
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'hour'
+                },
+                title: {
+                    display: true,
+                    text: 'Time'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Rainfall (inches)'
+                }
             }
-        } catch (error) {
-            this.statusDot.classList.add('error');
-            this.statusText.textContent = 'Error connecting to ThingSpeak';
-            console.error('ThingSpeak connection error:', error);
-            // Fallback to sample data
-            this.updateVisualization();
         }
     }
+};
 
-    async fetchThingSpeakData() {
-        if (!this.thingSpeakConfig.channelId || !this.thingSpeakConfig.readApiKey) {
-            console.warn('ThingSpeak configuration missing');
-            return null;
-        }
+// Time range options
+const timeRanges = {
+    '1h': { hours: 1, label: 'Last Hour' },
+    '24h': { hours: 24, label: 'Last 24 Hours' },
+    '7d': { days: 7, label: 'Last 7 Days' },
+    '30d': { days: 30, label: 'Last 30 Days' }
+};
 
-        const end = new Date();
-        const start = new Date(end - this.getTimeRangeInMs(this.timeRange));
-        
-        const url = new URL(`${this.thingSpeakConfig.baseUrl}/channels/${this.thingSpeakConfig.channelId}/feeds.json`);
-        url.searchParams.append('api_key', this.thingSpeakConfig.readApiKey);
-        url.searchParams.append('start', this.formatDate(start));
-        url.searchParams.append('end', this.formatDate(end));
-        
+let currentChart = null;
+
+async function fetchData(endpoint, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `${endpoint}${queryString ? '?' + queryString : ''}`;
+    
+    try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error('ThingSpeak API request failed');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
-        const data = await response.json();
-        return this.formatThingSpeakData(data.feeds);
-    }
-
-    formatDate(date) {
-        return date.toISOString().slice(0, 19);
-    }
-
-    getTimeRangeInMs(timeRange) {
-        const ranges = {
-            '1h': 60 * 60 * 1000,
-            '24h': 24 * 60 * 60 * 1000,
-            '7d': 7 * 24 * 60 * 60 * 1000,
-            '30d': 30 * 24 * 60 * 60 * 1000
-        };
-        return ranges[timeRange] || ranges['24h'];
-    }
-
-    formatThingSpeakData(feeds) {
-        return feeds.map(feed => ({
-            timestamp: new Date(feed.created_at),
-            rainfall: parseFloat(feed[`field${this.thingSpeakConfig.fields.rainfall}`] || 0),
-            rate: parseFloat(feed[`field${this.thingSpeakConfig.fields.rate}`] || 0)
-        }));
-    }
-
-    setupLiveUpdates() {
-        // Update every 15 seconds
-        setInterval(async () => {
-            try {
-                const data = await this.fetchThingSpeakData();
-                if (data) {
-                    this.updateVisualization(data);
-                }
-            } catch (error) {
-                console.error('Error updating data:', error);
-            }
-        }, 15000);
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        updateStatusDisplay('error', 'Failed to fetch data');
+        return null;
     }
 }
 
-// Initialize visualization when the page loads
+function updateStatusDisplay(status, message) {
+    const statusElement = document.getElementById('connection-status');
+    if (statusElement) {
+        const dot = statusElement.querySelector('.status-dot');
+        const text = statusElement.querySelector('.status-text');
+        
+        dot.className = 'status-dot ' + status;
+        text.textContent = message;
+    }
+}
+
+function updateCurrentConditions(data) {
+    if (!data) return;
+    
+    document.getElementById('total-rainfall').textContent = 
+        `${data.rainfall_in.toFixed(2)}"`;
+    document.getElementById('peak-rate').textContent = 
+        `${(data.rainfall_in / 0.25).toFixed(2)}"/hr`; // 15-min rate to hourly rate
+    document.getElementById('last-updated').textContent = 
+        new Date(data.timestamp).toLocaleString();
+}
+
+async function updateVisualization() {
+    const timeRange = document.getElementById('timeRange').value;
+    const dataType = document.getElementById('dataType').value;
+    const viewType = document.getElementById('viewType').value;
+    
+    // Calculate time range
+    const endTime = new Date();
+    const startTime = new Date(endTime - (
+        (timeRanges[timeRange].hours || timeRanges[timeRange].days * 24) * 3600000
+    ));
+    
+    // Fetch data based on time range
+    const endpoint = timeRanges[timeRange].days ? API_ENDPOINTS.daily : API_ENDPOINTS.hourly;
+    const response = await fetchData(endpoint, {
+        start: startTime.toISOString(),
+        end: endTime.toISOString()
+    });
+    
+    if (!response || !response.data) return;
+    
+    // Process data based on selection
+    const chartData = processData(response.data, dataType);
+    
+    // Update chart
+    updateChart(chartData, viewType, dataType);
+}
+
+function processData(data, dataType) {
+    switch (dataType) {
+        case 'rainfall':
+            return {
+                labels: data.map(d => new Date(d.hour_start || d.date)),
+                datasets: [{
+                    label: 'Rainfall',
+                    data: data.map(d => d.total_rainfall_in),
+                    unit: '"',
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+        case 'rate':
+            return {
+                labels: data.map(d => new Date(d.hour_start || d.date)),
+                datasets: [{
+                    label: 'Rainfall Rate',
+                    data: data.map(d => d.total_rainfall_in / (d.hour_start ? 1 : 24)), // hourly or daily rate
+                    unit: '"/hr',
+                    backgroundColor: 'rgba(255, 159, 64, 0.5)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            };
+        case 'cumulative':
+            let total = 0;
+            return {
+                labels: data.map(d => new Date(d.hour_start || d.date)),
+                datasets: [{
+                    label: 'Cumulative Rainfall',
+                    data: data.map(d => (total += d.total_rainfall_in)),
+                    unit: '"',
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            };
+    }
+}
+
+function updateChart(data, viewType, dataType) {
+    const ctx = document.getElementById('rainDataChart').getContext('2d');
+    
+    if (currentChart) {
+        currentChart.destroy();
+    }
+    
+    const config = { ...chartConfig };
+    config.type = viewType;
+    config.data = data;
+    
+    // Adjust scales based on data type
+    if (dataType === 'rate') {
+        config.options.scales.y.title.text = 'Rainfall Rate (inches/hour)';
+    } else {
+        config.options.scales.y.title.text = 'Rainfall (inches)';
+    }
+    
+    currentChart = new Chart(ctx, config);
+}
+
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    const visualization = new RainDataVisualization();
+    // Initialize controls
+    const controls = ['timeRange', 'dataType', 'viewType'];
+    controls.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', updateVisualization);
+        }
+    });
+    
     // Initial update
-    visualization.updateVisualization();
+    updateVisualization();
+    
+    // Set up periodic updates
+    setInterval(async () => {
+        const response = await fetchData(API_ENDPOINTS.current);
+        if (response && response.data) {
+            updateCurrentConditions(response.data);
+        }
+    }, 60000); // Update every minute
 });
