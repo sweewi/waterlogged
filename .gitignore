@@ -38,3 +38,15 @@ logs
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Arduino
+*.hex
+*.elf
+build/
+.build/
+
+# Raspberry Pi
+*.pyc
+__pycache__/
+dist/
+*.egg-info/

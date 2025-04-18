@@ -1,0 +1,12 @@
+[Unit]
+Description=LoRa Packet Forwarder
+After=network.target
+
+[Service]
+ExecStart=/home/SIP/start_lora.sh
+Restart=always
+User=root
+WorkingDirectory=/home/SIP/LR1302_loraWAN/LR1302_HAL/sx1302_hal/packet_forwarder
+
+[Install]
+WantedBy=multi-user.target

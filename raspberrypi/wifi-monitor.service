@@ -1,0 +1,11 @@
+[Unit]
+Description=WiFi Connection Monitor
+After=network.target
+
+[Service]
+ExecStart=/home/SIP/check_wifi.sh
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
