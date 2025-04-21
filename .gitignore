@@ -44,6 +44,8 @@ Thumbs.db
 *.elf
 build/
 .build/
+arduino-lmic-master*/
+arduino/arduino-lmic-master*/
 
 # Raspberry Pi
 *.pyc
