@@ -1,3 +1,66 @@
+// Import ThingSpeak API functions
+import { fetchPeriodData } from './thingspeak-api.js';
+
+// Color scheme for different data types
+const dataStyles = {
+    rainfall_in: {
+        label: 'Rainfall',
+        unit: '"',
+        colors: {
+            current: {
+                border: 'rgba(54, 162, 235, 1)',
+                background: 'rgba(54, 162, 235, 0.2)'
+            },
+            comparison: {
+                border: 'rgba(54, 162, 235, 0.7)',
+                background: 'rgba(54, 162, 235, 0.1)'
+            }
+        }
+    },
+    weight_g: {
+        label: 'Weight',
+        unit: 'g',
+        colors: {
+            current: {
+                border: 'rgba(75, 192, 192, 1)',
+                background: 'rgba(75, 192, 192, 0.2)'
+            },
+            comparison: {
+                border: 'rgba(75, 192, 192, 0.7)',
+                background: 'rgba(75, 192, 192, 0.1)'
+            }
+        }
+    },
+    temperature: {
+        label: 'Temperature',
+        unit: '°F',
+        colors: {
+            current: {
+                border: 'rgba(255, 99, 132, 1)',
+                background: 'rgba(255, 99, 132, 0.2)'
+            },
+            comparison: {
+                border: 'rgba(255, 99, 132, 0.7)',
+                background: 'rgba(255, 99, 132, 0.1)'
+            }
+        }
+    },
+    humidity: {
+        label: 'Humidity',
+        unit: '%',
+        colors: {
+            current: {
+                border: 'rgba(153, 102, 255, 1)',
+                background: 'rgba(153, 102, 255, 0.2)'
+            },
+            comparison: {
+                border: 'rgba(153, 102, 255, 0.7)',
+                background: 'rgba(153, 102, 255, 0.1)'
+            }
+        }
+    }
+};
+
 // Initialize Chart.js comparison chart
 let comparisonChart = null;
 
@@ -7,22 +70,7 @@ function initComparisonChart() {
         type: 'line',
         data: {
             labels: [],
-            datasets: [
-                {
-                    label: 'Current Period',
-                    data: [],
-                    borderColor: '#2f7ed8',
-                    backgroundColor: 'rgba(47, 126, 216, 0.1)',
-                    fill: true
-                },
-                {
-                    label: 'Comparison Period',
-                    data: [],
-                    borderColor: '#90ed7d',
-                    backgroundColor: 'rgba(144, 237, 125, 0.1)',
-                    fill: true
-                }
-            ]
+            datasets: []
         },
         options: {
             responsive: true,
@@ -32,24 +80,40 @@ function initComparisonChart() {
                 mode: 'index'
             },
             scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'hour'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
                 y: {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Rainfall (mm)'
+                        text: 'Value'
                     }
                 },
-                x: {
+                y1: {
+                    position: 'right',
+                    beginAtZero: true,
+                    display: false,
+                    grid: {
+                        drawOnChartArea: false,
+                    },
                     title: {
                         display: true,
-                        text: 'Time'
+                        text: 'Value'
                     }
                 }
             },
             plugins: {
                 title: {
                     display: true,
-                    text: 'Rainfall Comparison'
+                    text: 'Weather Data Comparison'
                 },
                 tooltip: {
                     enabled: true,
@@ -111,27 +175,134 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function updateVisualization() {
-    const currentPeriod = document.getElementById('currentPeriod').value;
-    const comparisonPeriod = document.getElementById('comparisonPeriod').value;
-
     try {
+        const currentPeriod = document.getElementById('currentPeriod').value;
+        const comparisonPeriod = document.getElementById('comparisonPeriod').value;
+        const dataParameterSelect = document.getElementById('dataParameter');
+
+        // Get selected data parameters
+        let selectedParameters = [];
+        if (dataParameterSelect.multiple) {
+            selectedParameters = Array.from(dataParameterSelect.selectedOptions).map(option => option.value);
+        } else {
+            selectedParameters = [dataParameterSelect.value];
+        }
+        
+        // Default to rainfall_in if nothing is selected
+        if (selectedParameters.length === 0) {
+            selectedParameters = ['rainfall_in'];
+        }
+
+        // Fetch data from ThingSpeak API
         const [currentData, comparisonData] = await Promise.all([
-            fetchRainfallData(currentPeriod),
-            fetchRainfallData(comparisonPeriod)
+            fetchPeriodData(currentPeriod),
+            fetchPeriodData(comparisonPeriod)
         ]);
 
-        updateComparisonData(currentData, comparisonData);
+        // Reset chart datasets
+        if (comparisonChart) {
+            comparisonChart.data.datasets = [];
+        }
+
+        // Create datasets for each selected parameter
+        const needsDualYAxis = selectedParameters.some(
+            param => param === 'temperature' || param === 'humidity'
+        );
+
+        // Update chart scales for dual y-axis if needed
+        if (comparisonChart && needsDualYAxis) {
+            comparisonChart.options.scales.y1.display = true;
+            
+            // Set appropriate axis titles
+            if (selectedParameters.includes('rainfall_in') || selectedParameters.includes('weight_g')) {
+                comparisonChart.options.scales.y.title.text = selectedParameters.includes('rainfall_in') ? 
+                    'Rainfall (inches)' : 'Weight (grams)';
+            }
+            
+            if (selectedParameters.includes('temperature') || selectedParameters.includes('humidity')) {
+                comparisonChart.options.scales.y1.title.text = selectedParameters.includes('temperature') ? 
+                    'Temperature (°F)' : 'Humidity (%)';
+            }
+        } else if (comparisonChart) {
+            comparisonChart.options.scales.y1.display = false;
+            
+            // Set single y-axis title based on selected parameter
+            const param = selectedParameters[0];
+            let yAxisTitle = 'Value';
+            
+            if (param === 'rainfall_in') yAxisTitle = 'Rainfall (inches)';
+            else if (param === 'weight_g') yAxisTitle = 'Weight (grams)';
+            else if (param === 'temperature') yAxisTitle = 'Temperature (°F)';
+            else if (param === 'humidity') yAxisTitle = 'Humidity (%)';
+            
+            comparisonChart.options.scales.y.title.text = yAxisTitle;
+        }
+
+        // Create datasets for the chart
+        selectedParameters.forEach(param => {
+            if (!dataStyles[param]) return;
+            
+            // Create current period dataset
+            comparisonChart.data.datasets.push({
+                label: `Current: ${dataStyles[param].label}`,
+                data: currentData.map(d => d[param] || 0),
+                borderColor: dataStyles[param].colors.current.border,
+                backgroundColor: dataStyles[param].colors.current.background,
+                fill: true,
+                yAxisID: (param === 'temperature' || param === 'humidity') && needsDualYAxis ? 'y1' : 'y',
+                unit: dataStyles[param].unit
+            });
+            
+            // Create comparison period dataset
+            comparisonChart.data.datasets.push({
+                label: `Comparison: ${dataStyles[param].label}`,
+                data: comparisonData.map(d => d[param] || 0),
+                borderColor: dataStyles[param].colors.comparison.border,
+                backgroundColor: dataStyles[param].colors.comparison.background,
+                fill: true,
+                yAxisID: (param === 'temperature' || param === 'humidity') && needsDualYAxis ? 'y1' : 'y',
+                unit: dataStyles[param].unit
+            });
+        });
+
+        // Set chart labels to timestamps
+        comparisonChart.data.labels = currentData.map(d => new Date(d.timestamp));
+        
+        // Update chart title
+        let chartTitle = 'Weather Data Comparison';
+        if (selectedParameters.length === 1) {
+            const param = selectedParameters[0];
+            if (param === 'rainfall_in') chartTitle = 'Rainfall Comparison';
+            else if (param === 'weight_g') chartTitle = 'Rainfall Weight Comparison';
+            else if (param === 'temperature') chartTitle = 'Temperature Comparison';
+            else if (param === 'humidity') chartTitle = 'Humidity Comparison';
+        }
+        comparisonChart.options.plugins.title.text = chartTitle;
+        
+        // Update chart
+        comparisonChart.update();
+        
+        // Update statistics based on rainfall data (if selected)
+        if (selectedParameters.includes('rainfall_in')) {
+            updateStatistics(
+                {
+                    values: currentData.map(d => d.rainfall_in || 0),
+                    unit: '"'
+                },
+                {
+                    values: comparisonData.map(d => d.rainfall_in || 0),
+                    unit: '"'
+                }
+            );
+        }
     } catch (error) {
         console.error('Error updating visualization:', error);
         // Show error state in UI
+        document.getElementById('currentTotal').textContent = 'Error loading data';
+        document.getElementById('currentPeak').textContent = 'Error loading data';
+        document.getElementById('comparisonTotal').textContent = 'Error loading data';
+        document.getElementById('comparisonPeak').textContent = 'Error loading data';
+        document.getElementById('totalDiff').textContent = 'Error loading data';
+        document.getElementById('peakDiff').textContent = 'Error loading data';
     }
-}
-
-async function fetchRainfallData(period) {
-    // This would be replaced with actual API calls to your backend
-    // For now, returning mock data
-    return {
-        labels: Array.from({length: 24}, (_, i) => `${i}:00`),
-        values: Array.from({length: 24}, () => Math.random() * 5)
-    };
 }

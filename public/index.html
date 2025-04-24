@@ -163,11 +163,15 @@
                   </div>
                   <div class="data-type-selector">
                       <label for="dataType">Data Type:</label>
-                      <select id="dataType" aria-label="Select type of data to display">
-                          <option value="rainfall">Rainfall Amount</option>
+                      <select id="dataType" aria-label="Select type of data to display" multiple>
+                          <option value="rainfall_in" selected>Rainfall (inches)</option>
+                          <option value="weight_g">Rainfall Weight (grams)</option>
+                          <option value="temperature">Temperature (°F)</option>
+                          <option value="humidity">Humidity (%)</option>
                           <option value="rate">Rainfall Rate</option>
                           <option value="cumulative">Cumulative Rainfall</option>
                       </select>
+                      <div class="multi-select-help">Hold Ctrl/Cmd to select multiple data types</div>
                   </div>
                   <div class="view-type-selector">
                       <label for="viewType">View Type:</label>
@@ -197,10 +201,10 @@
               <canvas id="rainDataChart"></canvas>
           </div>
           <div id="thingspeak-status" class="data-source-info">
-              <p>Data source: ThingSpeak API (Coming Soon)</p>
+              <p>Data source: ThingSpeak API</p>
               <div id="connection-status" class="status-indicator">
-                  <span class="status-dot"></span>
-                  <span class="status-text">Waiting for connection...</span>
+                  <span class="status-dot connected"></span>
+                  <span class="status-text">Connected</span>
               </div>
           </div>
       </div>
@@ -246,23 +250,42 @@
               const mapContainer = document.getElementById('map-container');
               const observer = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting) {
+                  // Convert coordinates from degrees/minutes/seconds to decimal
+                  // 42°20'02"N 71°10'19"W = 42.334, -71.172
+                  const gaugeLatitude = 42.334;
+                  const gaugeLongitude = -71.172;
+                  
+                  // Create an iframe with the marker
                   const iframe = document.createElement('iframe');
-                  iframe.src = "https://www.openstreetmap.org/export/embed.html?bbox=-71.1912%2C42.3317%2C-71.1573%2C42.3519&layer=mapnik";
+                  iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${gaugeLongitude-0.01}%2C${gaugeLatitude-0.01}%2C${gaugeLongitude+0.01}%2C${gaugeLatitude+0.01}&layer=mapnik&marker=${gaugeLatitude}%2C${gaugeLongitude}`;
                   iframe.style.width = "100%";
                   iframe.style.height = "100%";
                   iframe.style.border = "none";
                   iframe.allowFullscreen = true;
                   iframe.loading = "lazy";
-                  iframe.title = "Interactive map showing rain gauge locations";
-                  mapContainer.innerHTML = ''; // Clear the static map
+                  iframe.title = "Interactive map showing rain gauge location";
+                  
+                  // Clear container and add the iframe
+                  mapContainer.innerHTML = ''; 
                   mapContainer.appendChild(iframe);
+                  
+                  // Add gauge information below the map
+                  const gaugeInfo = document.createElement('div');
+                  gaugeInfo.className = 'gauge-info';
+                  gaugeInfo.innerHTML = `
+                    <h3>Rain Gauge Details:</h3>
+                    <p><strong>Location:</strong> 42°20'02"N 71°10'19"W</p>
+                    <p><strong>Elevation:</strong> 204 ft</p>
+                  `;
+                  mapContainer.after(gaugeInfo);
+                  
                   observer.disconnect(); // Stop observing once the iframe is loaded
                 }
               });
               observer.observe(mapContainer);
             });
           </script>
-          <p><a href="https://www.openstreetmap.org/#map=15/42.3418/-71.1742" target="_blank">View Larger Map</a></p>
+          <p><a href="https://www.openstreetmap.org/?mlat=42.334&mlon=-71.172#map=15/42.334/-71.172" target="_blank">View Larger Map</a></p>
       </div>
     </main>
   </div>

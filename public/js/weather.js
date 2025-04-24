@@ -19,20 +19,41 @@ export async function fetchWeather() {
 
   try {
     // Fetch weather data from Open-Meteo API for Boston College coordinates
-    const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.34&longitude=-71.17&current_weather=true&temperature_unit=fahrenheit');
+    // Updated API URL to include weathercode and match current API structure (2025)
+    const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.34&longitude=-71.17&current=temperature_2m,weathercode&temperature_unit=fahrenheit');
     if (!response.ok) {
       throw new Error(`Weather API responded with status ${response.status}: ${response.statusText}`);
     }
     const data = await response.json();
 
+    // Map weathercode to a human-readable description
+    const weathercodeMap = {
+      0: 'Clear sky',
+      1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
+      45: 'Fog', 48: 'Depositing rime fog',
+      51: 'Light drizzle', 53: 'Moderate drizzle', 55: 'Dense drizzle',
+      61: 'Light rain', 63: 'Moderate rain', 65: 'Heavy rain',
+      71: 'Light snow', 73: 'Moderate snow', 75: 'Heavy snow',
+      77: 'Snow grains',
+      80: 'Light rain showers', 81: 'Moderate rain showers', 82: 'Violent rain showers',
+      85: 'Light snow showers', 86: 'Heavy snow showers',
+      95: 'Thunderstorm', 96: 'Thunderstorm with light hail', 99: 'Thunderstorm with heavy hail'
+    };
+
     // Update the weather display with fetched data
     weatherLocation.textContent = 'Boston College, MA';
-    weatherTemperature.textContent = data.current_weather.temperature;
-    weatherCondition.textContent = data.current_weather.weathercode_description || 'Clear';
+    weatherTemperature.textContent = data.current.temperature_2m;
+    
+    // Get weather description based on code
+    const weatherCode = data.current.weathercode;
+    const weatherDescription = weathercodeMap[weatherCode] || 'Unknown';
+    weatherCondition.textContent = weatherDescription;
 
     // Toggle visibility of loading and data elements
     weatherLoading.style.display = 'none';
     weatherData.style.display = 'block';
+    
+    console.log('Weather data successfully loaded');
   } catch (error) {
     // Handle any errors that occur during the fetch
     console.error('Error fetching weather data:', error);

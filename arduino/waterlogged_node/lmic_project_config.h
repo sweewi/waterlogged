@@ -1,17 +1,22 @@
 #pragma once
 
 // Project-specific dependencies
-#if !defined(DISABLE_PING)
 #define DISABLE_PING
-#endif
-#if !defined(DISABLE_BEACONS)
 #define DISABLE_BEACONS
-#endif
 
 // Define the region
 #define CFG_us915 1
 #define CFG_sx1276_radio 1
 
-// This is the SX1276 radio, which is also used by the RFM95
+// Debug level
+#define CFG_DEBUG_LEVEL 2
+
+// Enable this to allow using printf to print to serial
 #define LMIC_PRINTF_TO Serial
-#define USE_ORIGINAL_AES
+
+// Use hardware SPI
+#define hal_init() ({ \
+    SPI.begin(); \
+    pinMode(lmic_pins.nss, OUTPUT); \
+    digitalWrite(lmic_pins.nss, HIGH); \
+})

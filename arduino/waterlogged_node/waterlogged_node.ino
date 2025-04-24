@@ -32,6 +32,8 @@
 #include <avr/sleep.h>      // Power management
 #include <avr/power.h>      // Additional power management
 #include <SoftwareSerial.h> // For Arduino boards that don't have multiple hardware serial ports
+#include <Wire.h>           // I2C communication for RTC
+#include <RTClib.h>         // RTC library for DS3231
 
 // Pin Definitions
 #define LOADCELL_DOUT_PIN  6    // HX711 data output pin
@@ -60,6 +62,10 @@ const float MIN_VALID_WEIGHT = -1000.0;         // Minimum valid weight reading
 const float MAX_VALID_WEIGHT = 1000.0;          // Maximum valid weight reading
 const int MAX_SENSOR_RETRIES = 3;               // Maximum number of sensor reading attempts
 
+// Power Management Constants
+#define SLEEP_CYCLES_PER_MEASUREMENT 4  // Number of 8-second sleep cycles between RTC checks (32 seconds)
+#define USE_POWER_SAVING true           // Set to false to disable sleep mode for debugging
+
 // LA66 LoRa Configuration
 #define LORA_BAUD_RATE    9600   // LA66 typically uses 9600 baud
 #define AT_TIMEOUT        5000   // Timeout for AT commands (ms)
@@ -68,13 +74,19 @@ const int MAX_SENSOR_RETRIES = 3;               // Maximum number of sensor read
 
 // TTN Configuration - REPLACE WITH YOUR OWN VALUES
 // These values must match what you set up in your TTN console
-const char* DEV_EUI = "70B3D57ED00530EE";  // Device EUI (from LA66 or TTN console)
-const char* DEV_ADDR = "00000000";         // Device Address for ABP (from TTN console)
-const char* NWKSKEY = "00000000000000000000000000000000";  // Network Session Key (from TTN console)
-const char* APPSKEY = "00000000000000000000000000000000";  // Application Session Key (from TTN console)
+const char* DEV_EUI = "A840419731896C75";  // Device EUI (from LA66 or TTN console)
+const char* JOIN_EUI = "A840410000000101"; // JOIN EUI (APP EUI) - Used for OTAA
+const char* APP_KEY = "483C2434ACED9A95BB6C93A86461194A";  // Application Key for OTAA
+// The following are no longer needed for OTAA but kept for reference
+const char* DEV_ADDR = "";                 // Only used in ABP mode
+const char* NWKSKEY = "";                  // Only used in ABP mode 
+const char* APPSKEY = "";                  // Only used in ABP mode
 
 // Create Software Serial for LA66
 SoftwareSerial loraSerial(LORA_RX, LORA_TX);  // RX, TX
+
+// RTC Object
+RTC_DS3231 rtc;
 
 // Global Objects
 HX711 scale;
@@ -127,17 +139,31 @@ void setup() {
   digitalWrite(VALVE_NO_PIN, LOW);     // NO valve open (relay on)
   
   // Initialize sensors
-  if (!initializeLoadCell() || !initializeDHT22()) {
+  if (!initializeLoadCell() || !initializeDHT22() || !initializeRTC()) {
     systemError = true;
   }
   
   // Initialize LoRa and attempt to join TTN
   initializeLoRa();
   
-  // Enable watchdog
-  wdt_enable(WDTO_8S);
+  // Configure watchdog for sleep/wake cycles
+  // Set up watchdog as interrupt, not reset
+  cli(); // Disable interrupts
+  wdt_reset(); // Reset the watchdog timer
+  
+  // Enter watchdog configuration mode:
+  WDTCSR |= (1<<WDCE) | (1<<WDE);
+  
+  // Set Watchdog settings:
+  // WDIE - Interrupt Enable
+  // WDE - Reset Enable (set to 0 to disable, 1 to enable)
+  // WDP3:0 - Prescaler (8s = 1001, 4s = 1000, 2s = 0111, 1s = 0110)
+  WDTCSR = (1<<WDIE) | (0<<WDE) | (1<<WDP3) | (0<<WDP2) | (0<<WDP1) | (1<<WDP0);
+  
+  sei(); // Enable interrupts
   
   Serial.println(F("Setup complete"));
+  Serial.println(F("Power saving mode active"));
   blinkLED(LED_ACTIVE_PIN, 3, 500);
 }
 
@@ -153,20 +179,34 @@ void loop() {
     joinNetwork();
   }
   
-  unsigned long currentTime = millis();
+  // Get current time from RTC
+  DateTime now = rtc.now();
   
-  // Check if it's time for a measurement
-  if (currentTime - lastMeasureTime >= MEASURE_INTERVAL && loraTxComplete && networkJoined) {
+  // Check if it's time for a measurement (every 15 minutes on the hour: 00, 15, 30, 45)
+  // Only proceed if LoRa transmission is complete and we're connected to the network
+  if (now.minute() % 15 == 0 && now.second() < 2 && loraTxComplete && networkJoined) {
+    // Only run once at the start of each 15-minute interval
+    // Using now.second() < 2 to give a small window to catch the exact minute
+    
+    Serial.print(F("Scheduled measurement at: "));
+    char timeStr[9];
+    sprintf(timeStr, "%02d:%02d:%02d", now.hour(), now.minute(), now.second());
+    Serial.println(timeStr);
+    
     digitalWrite(LED_ACTIVE_PIN, HIGH);
     performMeasurementCycle();
     digitalWrite(LED_ACTIVE_PIN, LOW);
-    lastMeasureTime = currentTime;
   }
   
   // Error indication
   if (systemError) {
     blinkLED(LED_ERROR_PIN, 1, 1000);
   }
+  
+  // Enter sleep mode to save power
+  // Using the RTC to wake up periodically and check the time
+  // This dramatically reduces power consumption between measurements
+  enterSleepMode();
 }
 
 // Initialize load cell
@@ -192,6 +232,36 @@ bool initializeDHT22() {
     Serial.println(F("DHT22 initialization failed!"));
     return false;
   }
+  
+  return true;
+}
+
+// Initialize DS3231 RTC module
+bool initializeRTC() {
+  Serial.println(F("Initializing RTC..."));
+  
+  if (!rtc.begin()) {
+    Serial.println(F("Couldn't find RTC! Check wiring"));
+    return false;
+  }
+  
+  if (rtc.lostPower()) {
+    Serial.println(F("RTC lost power, setting to compile time!"));
+    // Set RTC to the date & time this sketch was compiled
+    // This is useful as a fallback but should be set to current time via Serial if possible
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    
+    // Flash the error LED to indicate RTC time was reset
+    blinkLED(LED_ERROR_PIN, 5, 200);
+  }
+  
+  DateTime now = rtc.now();
+  Serial.print(F("Current RTC time: "));
+  char timeStr[20];
+  sprintf(timeStr, "%04d-%02d-%02d %02d:%02d:%02d", 
+          now.year(), now.month(), now.day(),
+          now.hour(), now.minute(), now.second());
+  Serial.println(timeStr);
   
   return true;
 }
@@ -223,8 +293,10 @@ void initializeLoRa() {
       if (loraSerial.available()) {
         String response = loraSerial.readStringUntil('\n');
         response.trim();
+        #if DEBUG_LA66
         Serial.print(F("Response: "));
         Serial.println(response);
+        #endif
         
         if (response.indexOf("OK") != -1) {
           moduleResponding = true;
@@ -263,12 +335,12 @@ void initializeLoRa() {
   delay(1000);
   
   // Module is responding, continue with configuration
-  Serial.println(F("Configuring LA66 module for TTN using ABP..."));
+  Serial.println(F("Configuring LA66 module for TTN using OTAA..."));
   
   // Get firmware version
   sendATCommand("AT+VER=?", NULL, 2000);
   
-  // CRITICAL: Set the TTN keys for ABP activation
+  // CRITICAL: Set the TTN keys for OTAA activation
   // Set Device EUI
   char deui_cmd[50];
   sprintf(deui_cmd, "AT+DEUI=%s", DEV_EUI);
@@ -277,43 +349,36 @@ void initializeLoRa() {
     systemError = true;
   }
   
-  // Set Device Address - REQUIRED for ABP
-  char daddr_cmd[50];
-  sprintf(daddr_cmd, "AT+DADDR=%s", DEV_ADDR);
-  if (!sendATCommand(daddr_cmd, "OK", 2000)) {
-    Serial.println(F("Failed to set Device Address"));
+  // Set App EUI (JOIN EUI) - REQUIRED for OTAA
+  char appeui_cmd[50];
+  sprintf(appeui_cmd, "AT+APPEUI=%s", JOIN_EUI);
+  if (!sendATCommand(appeui_cmd, "OK", 2000)) {
+    Serial.println(F("Failed to set App EUI"));
     systemError = true;
   }
   
-  // Set Network Session Key - REQUIRED for ABP
-  char nwkskey_cmd[70];
-  sprintf(nwkskey_cmd, "AT+NWKSKEY=%s", NWKSKEY);
-  if (!sendATCommand(nwkskey_cmd, "OK", 2000)) {
-    Serial.println(F("Failed to set Network Session Key"));
+  // Set App Key - REQUIRED for OTAA
+  char appkey_cmd[70];
+  sprintf(appkey_cmd, "AT+APPKEY=%s", APP_KEY);
+  if (!sendATCommand(appkey_cmd, "OK", 2000)) {
+    Serial.println(F("Failed to set App Key"));
     systemError = true;
   }
   
-  // Set Application Session Key - REQUIRED for ABP
-  char appskey_cmd[70];
-  sprintf(appskey_cmd, "AT+APPSKEY=%s", APPSKEY);
-  if (!sendATCommand(appskey_cmd, "OK", 2000)) {
-    Serial.println(F("Failed to set Application Session Key"));
-    systemError = true;
-  }
-  
-  // Set join mode to ABP
-  if (!sendATCommand("AT+NJM=0", "OK", 2000)) {
-    Serial.println(F("Failed to set ABP join mode"));
+  // Set join mode to OTAA
+  if (!sendATCommand("AT+NJM=1", "OK", 2000)) {
+    Serial.println(F("Failed to set OTAA join mode"));
     systemError = true;
   }
   
   // Verify the keys were set correctly
+  #if DEBUG_LA66
   Serial.println(F("Verifying TTN keys..."));
   sendATCommand("AT+DEUI=?", NULL, 2000);
-  sendATCommand("AT+DADDR=?", NULL, 2000);
-  sendATCommand("AT+NWKSKEY=?", NULL, 2000);
-  sendATCommand("AT+APPSKEY=?", NULL, 2000);
+  sendATCommand("AT+APPEUI=?", NULL, 2000);
+  sendATCommand("AT+APPKEY=?", NULL, 2000);
   sendATCommand("AT+NJM=?", NULL, 2000);
+  #endif
   
   // Configure for US915 frequency band (TTN US typically uses channels 8-15)
   // For US915, set the proper channels
@@ -354,28 +419,32 @@ void initializeLoRa() {
     Serial.println(F("Failed to set public network mode"));
   }
   
-  // For ABP, activate network connection
+  // Attempt to join network using OTAA
   joinNetwork();
   
   Serial.println(F("LA66 configuration complete"));
 }
 
-// Join LoRaWAN network using ABP
+// Join LoRaWAN network using OTAA
 void joinNetwork() {
   lastJoinAttempt = millis();
   
-  // Set join mode to ABP (0)
-  if (!sendATCommand("AT+NJM=0", "OK", 2000)) {
-    Serial.println(F("Failed to set ABP join mode"));
+  // Set join mode to OTAA (1)
+  if (!sendATCommand("AT+NJM=1", "OK", 2000)) {
+    Serial.println(F("Failed to set OTAA join mode"));
     return;
   }
   
-  // In ABP mode, we need to verify the network session is active
-  sendATCommand("AT+NJS=?", NULL, 2000);
+  // Send join command
+  if (!sendATCommand("AT+JOIN", "+EVT:JOINED", 10000)) {
+    Serial.println(F("Failed to join TTN network"));
+    networkJoined = false;
+    return;
+  }
   
-  // For ABP, we can simply set network joined to true since keys are pre-configured
+  // Network joined successfully
   networkJoined = true;
-  Serial.println(F("ABP mode activated, device ready to send data"));
+  Serial.println(F("OTAA mode activated, device ready to send data"));
   
   // Blink the active LED to show ready state
   blinkLED(LED_ACTIVE_PIN, 3, 200);
@@ -387,6 +456,8 @@ void sendLoRaData(float weight, float temperature, float humidity) {
     Serial.println(F("Not joined to TTN, cannot send data"));
     return;
   }
+
+  wdt_reset(); // Reset watchdog before data processing
 
   // Pack data into hex string
   // Format: 6 bytes - 2 bytes for each value (weight, temp, humidity)
@@ -421,6 +492,8 @@ void sendLoRaData(float weight, float temperature, float humidity) {
   loraTxComplete = false;
   digitalWrite(LED_ACTIVE_PIN, HIGH);
   
+  wdt_reset(); // Reset watchdog before sending command (important)
+  
   // Send the command
   if (sendATCommand(cmd, "OK", 5000)) {
     Serial.println(F("TTN uplink initiated"));
@@ -431,6 +504,7 @@ void sendLoRaData(float weight, float temperature, float humidity) {
   }
   
   digitalWrite(LED_ACTIVE_PIN, LOW);
+  wdt_reset(); // Final watchdog reset after transmission attempt
 }
 
 // Perform measurement cycle
@@ -443,11 +517,17 @@ void performMeasurementCycle() {
     return;
   }
   delay(VALVE_DELAY);
+  wdt_reset(); // Reset watchdog after valve delay
   
   // Step 2: Take initial measurements
   float weight1 = getTaredWeight();
+  wdt_reset(); // Reset watchdog after weight measurement
+  
   float temp = getTemperature();
+  wdt_reset(); // Reset watchdog after temperature measurement
+  
   float humidity = getHumidity();
+  wdt_reset(); // Reset watchdog after humidity measurement
   
   if (weight1 == -999 || temp == -999 || humidity == -999) {
     systemError = true;
@@ -458,16 +538,26 @@ void performMeasurementCycle() {
   if (!operateValve(VALVE_NC_PIN, LOW, "top valve open")) {
     return;
   }
-  delay(VALVE_NC_TIME);  // Wait for drainage
+  
+  // CRITICAL: Reset watchdog during long drainage operation
+  // VALVE_NC_TIME is 35 seconds, much longer than the 8-second watchdog timeout
+  unsigned long drainStartTime = millis();
+  while (millis() - drainStartTime < VALVE_NC_TIME) {
+    wdt_reset(); // Keep resetting the watchdog during long drainage
+    delay(1000); // Check every second
+  }
   
   // Step 4: Close top valve
   if (!operateValve(VALVE_NC_PIN, HIGH, "top valve close")) {
     return;
   }
   delay(VALVE_DELAY);
+  wdt_reset(); // Reset watchdog after valve delay
   
   // Step 5: Take final weight
   float weight2 = getTaredWeight();
+  wdt_reset(); // Reset watchdog after weight measurement
+  
   if (weight2 == -999) {
     systemError = true;
     return;
@@ -486,6 +576,7 @@ void performMeasurementCycle() {
   // Send data to TTN
   if (!systemError) {
     sendLoRaData(lastWeight, lastTemp, lastHumidity);
+    // Note: sendLoRaData has its own watchdog resets
   }
 }
 
@@ -550,8 +641,13 @@ bool sendATCommand(const char* command, const char* expectedResponse, unsigned l
   // Clear previous response
   memset(responseBuffer, 0, sizeof(responseBuffer));
   
+  #if DEBUG_LA66
   Serial.print(F("Sending command: "));
   Serial.println(command);
+  #endif
+  
+  // Reset watchdog before sending command
+  wdt_reset();
   
   // Send the command
   loraSerial.println(command);
@@ -563,12 +659,22 @@ bool sendATCommand(const char* command, const char* expectedResponse, unsigned l
   while (millis() - startTime < timeout) {
     if (loraSerial.available()) {
       char c = loraSerial.read();
+      
+      // Ignore carriage returns and line feeds until we have actual data
+      if ((c == '\r' || c == '\n') && bufferPos == 0) {
+        continue;
+      }
+      
+      // If we receive a termination character and have data in the buffer
       if (c == '\r' || c == '\n') {
         if (bufferPos > 0) {
           // Null-terminate the buffer and print response
           responseBuffer[bufferPos] = '\0';
+          
+          #if DEBUG_LA66
           Serial.print(F("Response: "));
           Serial.println(responseBuffer);
+          #endif
           
           // Check for expected response if provided
           if (expectedResponse == NULL || strstr(responseBuffer, expectedResponse) != NULL) {
@@ -581,11 +687,25 @@ bool sendATCommand(const char* command, const char* expectedResponse, unsigned l
         responseBuffer[bufferPos++] = c;
       }
     }
-    // Pat the watchdog
-    wdt_reset();
+    
+    // For long timeouts, reset the watchdog periodically
+    // This is crucial for commands like AT+JOIN which can take several seconds
+    if ((millis() - startTime) % 4000 < 10) {  // Reset every ~4 seconds
+      wdt_reset();
+    }
   }
   
+  #if DEBUG_LA66
   Serial.println(F("Command timed out"));
+  #endif
+  
+  wdt_reset();  // Reset watchdog after timeout
+  
+  // Flush any remaining data in the serial buffer
+  while (loraSerial.available()) {
+    loraSerial.read();
+  }
+  
   return false;
 }
 
@@ -597,13 +717,22 @@ void checkLoRaSerial() {
     
     while (loraSerial.available() && pos < sizeof(buffer) - 1) {
       char c = loraSerial.read();
+      
+      // Ignore carriage returns and line feeds until we have actual data
+      if ((c == '\r' || c == '\n') && pos == 0) {
+        continue;
+      }
+      
+      // If we receive a termination character and have data in the buffer
       if (c == '\r' || c == '\n') {
         if (pos > 0) {
           buffer[pos] = '\0';
           
           // Process received line
+          #if DEBUG_LA66
           Serial.print(F("LA66: "));
           Serial.println(buffer);
+          #endif
           
           // Check for specific LA66 event notifications
           // Based on the LA66 documentation
@@ -629,20 +758,22 @@ void checkLoRaSerial() {
           
           // Join notifications
           else if (strstr(buffer, "+EVT:JOINED") != NULL) {
-            // Network joined successfully (ABP)
+            // Network joined successfully (OTAA)
             Serial.println(F("TTN joined successfully!"));
             networkJoined = true;
             
             // After successful join, check and print network details
+            #if DEBUG_LA66
             sendATCommand("AT+NJS=?", NULL, 2000);  // Verify join status
             sendATCommand("AT+DEVADDR=?", NULL, 2000); // Confirm Device Address
             sendATCommand("AT+DR=?", NULL, 2000);   // Check data rate
+            #endif
             
             // Blink the active LED to show successful join
             blinkLED(LED_ACTIVE_PIN, 5, 200);
           }
           else if (strstr(buffer, "+EVT:JOIN_FAILED") != NULL) {
-            // Join failed (ABP)
+            // Join failed (OTAA)
             Serial.println(F("TTN join failed"));
             networkJoined = false;
             
@@ -655,7 +786,9 @@ void checkLoRaSerial() {
             // Downlink received
             Serial.println(F("Downlink data received from TTN"));
             // You could parse this data if needed
+            #if DEBUG_LA66
             sendATCommand("AT+RECVB=?", NULL, 2000);  // Print received data in binary format
+            #endif
           }
           
           // Link status
@@ -672,4 +805,52 @@ void checkLoRaSerial() {
       }
     }
   }
+}
+
+// Set up sleep mode and enter it
+void enterSleepMode() {
+  if (!USE_POWER_SAVING) {
+    return; // Skip sleep mode if disabled for debugging
+  }
+  
+  Serial.println(F("Entering sleep mode to save power..."));
+  Serial.flush(); // Make sure all serial output is sent before sleep
+  
+  // Prepare for sleep
+  digitalWrite(LED_ACTIVE_PIN, LOW);
+  digitalWrite(LED_POWER_PIN, LOW); // Turn off power LED during sleep
+  
+  // Disable ADC to save power
+  ADCSRA &= ~(1 << ADEN);
+  
+  // Configure sleep mode
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN); // Deepest sleep mode
+  sleep_enable();
+  
+  // Disable brown-out detection during sleep (saves power)
+  #if defined(BODS) && defined(BODSE)
+    sleep_bod_disable();
+  #endif
+  
+  // Enter sleep mode
+  wdt_reset(); // Reset watchdog just before sleep
+  interrupts(); // Ensure interrupts are enabled so we can wake up
+  sleep_mode(); // The program will continue from here after waking
+  
+  // After waking up...
+  sleep_disable();
+  
+  // Re-enable ADC
+  ADCSRA |= (1 << ADEN);
+  
+  // Turn power LED back on
+  digitalWrite(LED_POWER_PIN, HIGH);
+  
+  Serial.println(F("Woke from sleep"));
+}
+
+// Watchdog timer interrupt service routine
+ISR(WDT_vect) {
+  // This is called when watchdog times out - we don't need to do anything here
+  // Just having this ISR allows the watchdog to be used as a wake timer
 }

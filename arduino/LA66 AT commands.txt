@@ -1,0 +1,1662 @@
+www.dragino.com
+
+LA66 AT Command Sets
+
+Version
+
+Describe
+
+Author
+
+Time
+
+V1.0
+
+Release
+
+Dragino
+
+2022-12-12
+
+Dragino LoRa® AT Command Sets
+
+1 / 24
+
+www.dragino.com
+
+LA66 AT Command Sets ........................................................................................................ 1
+1.
+Introduction ......................................................................................................4
+1.1 How to connect device and send AT command? ............................................. 4
+2.
+General Command ............................................................................................6
+2.1 AT?: Short Help .................................................................................................6
+2.2 ATZ: MCU Reset ................................................................................................ 6
+2.3 AT+FDR: Factory Data Reset .............................................................................6
+2.4 AT+VER: Image Version and Frequency Band .................................................. 7
+2.5 AT+CFG: Print all configurations .......................................................................7
+3.
+Keys, IDs and EUIs management ...................................................................... 8
+3.1 AT+APPEUI: Application EUI ............................................................................. 8
+3.2 AT+APPKEY: Application Key ............................................................................ 8
+3.3 AT+APPSKEY: Application Session Key ............................................................. 9
+3.4 AT+DADDR: Device Address ............................................................................. 9
+3.5 AT+DEUI: Device EUI .......................................................................................10
+3.6 AT+NWKID: Network ID(You can enter this command change only after
+successful network connection) .....................................................................10
+3.7 AT+NWKSKEY: Network Session Key .............................................................. 10
+3.8 AT+APPSKEY: Get or Set the Application Session Key ....................................11
+4.
+Joining and sending date on LoRa® network ..................................................12
+4.1 AT+CFM: Confirm Mode .................................................................................12
+4.2 AT+JOIN: Join LoRa® Network ........................................................................ 12
+4.3 AT+NJM: LoRa® Network Join Mode ..............................................................13
+4.4 AT+NJS: LoRa® Network Join Status ............................................................... 13
+4.5 AT+RECV: Print Last Received Data in Raw Format ........................................14
+4.6 AT+RECVB: Print Last Received Data in Binary Format .................................. 14
+4.7 AT+SEND: Send Text Data ...............................................................................14
+5.
+LoRa® network management ......................................................................... 15
+5.1 AT+ADR: Adaptive Rate .................................................................................. 15
+5.2 AT+CLASS: LoRa® Class(Currently only support class A, class C) ....................15
+5.3 AT+DCS: Duty Cycle Setting ............................................................................ 16
+5.4 AT+DR: Data Rate (Can Only be Modified after ADR=0) ................................ 16
+5.5 AT+FCD: Frame Counter Downlink .................................................................17
+5.6 AT+FCU: Frame Counter Uplink ......................................................................17
+5.7 AT+JN1DL: Join Accept Delay1 ....................................................................... 18
+5.8 AT+JN2DL: Join Accept Delay2 ....................................................................... 18
+5.9 AT+PNM: Public Network Mode .................................................................... 18
+5.10 AT+RX1DL: Receive Delay1 .............................................................................19
+5.11 AT+RX2DL: Receive Delay2 .............................................................................19
+5.12 AT+RX2DR: Rx2 Window Data Rate ................................................................20
+5.13 AT+RX2FQ: Rx2 Window Frequency ...............................................................20
+5.14 AT+TXP: Transmit Power ................................................................................ 21
+Dragino LoRa® AT Command Sets
+
+2 / 24
+
+www.dragino.com
+
+5.15 AT+RSSI: RSSI of the Last Received Packet .....................................................21
+5.16 AT+SNR: SNR of the Last Received Packet ..................................................... 21
+5.17 AT+PORT: Application Port .............................................................................22
+5.18 AT+ CHS: Single Channel Mode ...................................................................... 22
+5.19 AT+ CHE: Eight Channel Mode ........................................................................22
+5.20 AT+SLEEP: Set sleep mode ............................................................................. 24
+5.21 AT+DEVICETIMEREQ: Device time req ........................................................... 24
+5.22 AT+BAT: Get the current battery voltage in Mv .............................................24
+5.23 AT+RJTDC: Get or set the ReJoin data transmission interval in min ..............25
+5.24 AT+RPL: Get or set response level ..................................................................25
+5.25 AT+TIMESTAMP: Get or Set UNIX timestamp in second ................................26
+5.26 AT+LEAPSEC: Get or Set Leap Second ............................................................ 26
+5.27 AT+SYNCMOD: Get or Set time synchronization method ..............................26
+5.28 AT+SYNCTDC: Get or Set time synchronization method ................................27
+5.29 AT+DDETECT: Get or set the downlink detection .......................................... 27
+5.30 AT+SETMAXNBTRANS: Get or set the max nbtrans in LinkADR .....................27
+5.31 AT+SENDB: Send hexadecimal data along with the application port and
+confirm status .................................................................................................28
+
+Dragino LoRa® AT Command Sets
+
+3 / 24
+
+www.dragino.com
+
+1. Introduction
+This article describes the AT Commands Set for LA66 module.
+
+1.1
+
+How to connect device and send AT command?
+
+Software Setting:
+An USB-TTL can be used with standard windows software such as Serial Port Utility. The chosen
+software should be configured with the following parameters:
+• Baud rate: 9600
+• Data: 8 bit
+• Parity: none
+• Stop: 1 bit
+• Flow type: none
+Figure 1 show the standard configuration for Serial Port Utility to use USB-TTL.
+
+All the AT commands have a standard format as “AT+XXX”, with XXX denoting the command.
+There are four available command behaviors:
+• AT+XXX? provides a short help of the given command, for example AT?
+• AT+XXX is used to run a command, such as AT+JOIN
+• AT+XXX=? is used to get the value of a given command, for example, AT+VER=?
+• AT+XXX=<value> is used to provide a value to a command, for example, AT+NJM=1
+• The output of the commands is provided on the UART. The output format is as below:
+<value><CR><LF>
+<CR><LF><Status>
+Note: <CR> stands for “carriage return” and <LF> stands for “line feed”
+The <value><CR><LF> output is returned whenever the “help AT+XXX?” or the “get
+
+Dragino LoRa® AT Command Sets
+
+4 / 24
+
+www.dragino.com
+
+AT+XXX=?” commands are run.
+When no value is returned, the <value><CR><LF> output is not returned at all.
+Every command (except for ATZ used for MCU reset) returns a status string, which is
+preceded and followed by <CR><LF> in a “<CR><LF><Status>” format. The
+possible status are:
+• OK: command run correctly without error.
+• AT_ERROR: generic error
+• AT_PARAM_ERROR: a parameter of the command is wrong
+• AT_BUSY_ERROR: the LoRa® network is busy, so the command could not completed
+• AT_TEST_PARAM_OVERFLOW: the parameter is too long
+• AT_NO_NETWORK_JOINED: the LoRa® network has not been joined yet
+• AT_RX_ERROR: error detection during the reception of the command
+More details on each command description and examples are described in the next part of
+this section. Note that each command preceded by # is the one provided by the host to the
+module. Then the return of the module is printed.
+
+Dragino LoRa® AT Command Sets
+
+5 / 24
+
+www.dragino.com
+
+2. General Command
+2.1 AT?: Short Help
+AT?: Short Help
+Test Command:
+
+Response:
+
+AT?
+
+AT+<CMD>?:help on <CMD>
+AT+<CMD>:run <CMD>
+AT+<CMD>=<value>:set the value
+AT+<CMD>=?:get the value
+<followed by the help of all commands>
+OK
+
+2.2 ATZ: MCU Reset
+ATZ: MCU Reset
+Test Command:
+
+Response:
+
+ATZ?
+
+ATZ: Trig a reset of the MCU
+OK
+
+Test Command:
+
+Response:
+
+ATZ
+
+LA66 Device
+Image Version: v1.1
+LoRaWan Stack: DR-LWS-007
+Frequency Band: US915
+DevEui= 70 B3 D5 7E D0 05 30 EE
+JoinRequest NbTrials= 72
+***** UpLinkCounter= 0 *****
+TX on freq 905.300 MHz at DR 0
+txDone
+
+2.3 AT+FDR: Factory Data Reset
+AT+FDR: Factory Data Reset
+Test Command:
+
+Response:
+
+AT+FDR
+
+LA66 Device
+Image Version: v1.1
+LoRaWan Stack: DR-LWS-007
+
+Dragino LoRa® AT Command Sets
+
+6 / 24
+
+www.dragino.com
+
+Test Command:
+AT+FDR?
+
+Frequency Band: US915
+DevEui= XX XX XX XX XX XX XX XX
+Please set the parameters or reset Device to apply change
+Response:
+Reset Parameters to Factory Default, Keys Reserve
+OK
+
+2.4 AT+VER: Image Version and Frequency Band
+AT+VER: Image Version and Frequency Band
+Test Command:
+
+Response:
+
+AT+VER=?
+
+1.3 EU868
+OK
+
+Test Command:
+
+Response:
+
+AT+VER?
+
+AT+VER: Get current image version and Frequency Band
+OK
+
+2.5 AT+CFG: Print all configurations
+AT+CFG: Print all configurations
+Test Command:
+
+Response:
+
+AT+CFG
+
+AT+DEUI = XX XX XX XX XX XX XX XX
+AT+APPEUI=XXXXXXXX
+……….
+AT+SETMAXNBTRANS=X,X
+OK
+
+Dragino LoRa® AT Command Sets
+
+7 / 24
+
+www.dragino.com
+
+3. Keys, IDs and EUIs management
+3.1 AT+APPEUI: Application EUI
+AT+APPEUI: Application EUI <8 hex separated by >
+Test Command:
+
+Response:
+
+AT+APPEUI?
+
+AT+APPEUI: Get or Set the Application EUI
+OK
+
+Test Command:
+
+Response:
+
+AT+APPEUI=?
+
+XX XX XX XX XX XX XX XX
+OK
+
+Test Command:
+
+Response:
+
+AT+APPEUI=01 30 48 23 54 76 53
+CD
+
+OK
+
+3.2 AT+APPKEY: Application Key
+AT+APPKEY: Application Key <16 hex separated by >
+Test Command:
+
+Response:
+
+AT+APPKEY?
+
+AT+APPKEY: Get or Set the Application Key
+OK
+
+Test Command:
+
+Response:
+
+AT+APPKEY=?
+
+XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+OK
+
+Test Command:
+
+Response:
+
+AT+APPKEY= XX XX XX XX XX
+XX XX XX XX XX XX XX XX XX OK
+XX XX
+
+Dragino LoRa® AT Command Sets
+
+8 / 24
+
+www.dragino.com
+
+3.3 AT+APPSKEY: Application Session Key
+AT+APPSKEY: Application Session Key <16 hex separated by >
+Test Command:
+
+Response:
+
+AT+APPSKEY?
+
+AT+APPSKEY: Get or Set the Application Session Key
+OK
+
+Test Command:
+
+Response:
+
+AT+APPSKEY=?
+
+XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+OK
+
+Test Command:
+AT+APPSKEY= XX XX XX XX
+
+XX XX XX XX XX XX XX XX
+XX XX XX XX
+
+Response:(While Error in format, return
+AT_PARAM_ERROR)
+OK
+
+3.4 AT+DADDR: Device Address
+AT+DADDR: Device Address <4 hex digit separate by >
+Test Command:
+
+Response:
+
+AT+DADDR?
+
+AT+DADDR: Get or Set the Device Address
+OK
+
+Test Command:
+
+Response: (While Error in format, return
+
+AT+DADDR=?
+
+AT_PARAM_ERROR)
+XX XX XX XX
+OK
+
+Test Command:
+
+Response:
+
+AT+DADDR=XX XX XX XX
+OK
+
+Dragino LoRa® AT Command Sets
+
+9 / 24
+
+www.dragino.com
+
+3.5 AT+DEUI: Device EUI
+AT+DEUI: Device EUI<8 hex separated by:>
+Test Command:
+
+Response:
+
+AT+DEUI?
+
+AT+DEUI: Get or Set the Device EUI
+OK
+
+Test Command:
+
+Response:
+
+AT+DEUI=?
+
+XX XX XX XX XX XX XX XX
+OK
+
+Test Command:
+
+Response:(System will write new value to Device EUI,While
+
+AT+DEUI= XX XX XX XX XX XX XX
+XX
+
+Error in format, return AT_PARAM_ERROR)
+OK
+
+3.6 AT+NWKID: Network ID(You can enter this command change only after successful
+network connection)
+AT+NWKID: Network ID<4 hex separated by:>
+Test Command:
+
+Response:
+
+AT+NWKID?
+
+AT+NWKID: Get or Set the Network ID
+OK
+
+Test Command:
+
+Response:
+
+AT+NWKID=?
+
+XX XX XX XX
+OK
+
+Test Command:
+
+Response:
+
+AT+NWKID=A8 40 41 FF
+OK
+
+3.7 AT+NWKSKEY: Network Session Key
+AT+NWKSKEY: Network Session Key<16 hex separated by:>
+Test Command:
+
+Response:
+
+AT+NWKSKEY?
+
+AT+NWKSKEY: Get or Set the Network Session Key
+OK
+
+Test Command:
+
+Response:
+
+AT+NWKSKEY=?
+
+XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+
+Dragino LoRa® AT Command Sets
+
+10 / 24
+
+www.dragino.com
+
+OK
+Test Command:
+
+Response:
+
+AT+NWKSKEY= XX XX XX XX XX
+XX XX XX XX XX XX XX XX XX XX
+XX
+
+OK
+
+3.8 AT+APPSKEY: Get or Set the Application Session Key
+AT+APPSKEY: Application Session Key <16 hex separated by:>
+Test Command:
+
+Response:
+
+AT+APPSKEY?
+
+AT+APPSKEY: Get or Set the Application Session Key
+OK
+
+Test Command:
+
+Response:
+
+AT+APPSKEY=?
+
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+OK
+
+Test Command:
+AT+APPSKEY= FF FF FF FF FF FF FF
+FF FF FF FF FF FF FF FF FF
+
+Response:
+OK
+
+Dragino LoRa® AT Command Sets
+
+11 / 24
+
+www.dragino.com
+
+4. Joining and sending date on LoRa® network
+4.1 AT+CFM: Confirm Mode
+AT+CFM: Confirm Mode
+Test Command:
+
+Response:
+
+AT+CFM?
+
+AT+CFM: Get or Set the confirmation mode (0-1)
+OK
+
+Test Command:
+AT+CFM=?
+
+Response(confirm status, max retries, uplink fcnt increase
+status)
+0,7,0
+OK
+
+Test Command:
+
+Response:
+
+AT+CFM=1,7,1
+OK
+Test Command:
+
+While Error in format, return
+
+AT+CFM=2
+
+AT_PARAM_ERROR
+
+4.2 AT+JOIN: Join LoRa® Network
+AT+ JOIN: Join LoRa® Network
+Test Command:
+
+Response:
+
+AT+JOIN
+OK
+Test Command:
+
+Response:
+
+AT+ JOIN?
+
+AT+JOIN: Join network
+OK
+While Error in format, return
+AT_BUSY_ERROR
+
+Dragino LoRa® AT Command Sets
+
+12 / 24
+
+www.dragino.com
+
+4.3 AT+NJM: LoRa® Network Join Mode
+AT+ NJM: LoRa® Network Join Mode
+Test Command:
+
+Response:
+
+AT+NJM=?
+
+1
+OK
+
+Test Command:
+
+Response:
+
+AT+NJM?
+
+AT+NJM: Get or Set the Network Join Mode. (0: ABP, 1:
+OTAA)
+OK
+
+Test Command:
+
+Response:
+
+AT+NJM=0
+OK
+Test Command:
+
+While Error in format, return
+
+AT+NJM=2
+
+AT_PARAM_ERROR
+
+4.4 AT+NJS: LoRa® Network Join Status
+AT+ NJS: LoRa® Network Join Status
+Test Command:
+
+Response:
+
+AT+NJS=?
+
+0
+OK
+
+Test Command:
+
+Response:
+
+AT+NJS?
+
+AT+NJS: Get the join status
+OK
+
+Dragino LoRa® AT Command Sets
+
+13 / 24
+
+4.5 AT+RECV: Print Last Received Data in Raw Format
+
+www.dragino.com
+
+AT+ RECV: Print Last Received Data in Raw Format<port:data>
+Test Command:
+
+Response:
+
+AT+RECV=?
+
+0:
+OK
+
+Test Command:
+
+Response:
+
+AT+RECV?
+
+AT+RECV: print last received data in raw format
+OK
+
+4.6 AT+RECVB: Print Last Received Data in Binary Format
+AT+ RECVB: Print Last Received Data in Binary Format<port:data>
+Test Command:
+
+Response:
+
+AT+RECVB=?
+
+2: 0010
+OK
+
+Test Command:
+
+Response:
+
+AT+RECVB?
+
+AT+RECVB: print last received data in binary format (with
+hexadecimal values)
+OK
+
+4.7 AT+SEND: Send Text Data
+AT+ SEND: Send Text Data<port:data>
+Test Command:
+
+Response:
+
+AT+SEND?
+
+AT+SEND: Send text data along with the application port
+OK
+
+Test Command:
+
+Response:
+
+AT+SEND=0,2,5,happy
+OK
+While Error in format, return
+AT_BUSY_ERROR/AT_PARAM_ERROR/AT_NO_NETWORK_J
+OI NED
+
+Dragino LoRa® AT Command Sets
+
+14 / 24
+
+www.dragino.com
+
+5. LoRa® network management
+5.1 AT+ADR: Adaptive Rate
+AT+ ADR: Adaptive Rate
+Test Command:
+
+Response:
+
+AT+ADR=?
+
+1
+OK
+
+Test Command:
+
+Response:
+
+AT+ADR?
+
+AT+ADR: Get or Set the Adaptive Data Rate setting. (0: off,
+1: on)
+OK
+
+Test Command:
+
+Response:
+
+AT+ADR=0
+OK
+While Error in format, return
+AT_PARAM_ERROR
+
+5.2 AT+CLASS: LoRa® Class(Currently only support class A, class C)
+AT+ CLASS: LoRa® Class
+Test Command:
+
+Response:
+
+AT+CLASS=?
+
+A
+OK
+
+Dragino LoRa® AT Command Sets
+
+15 / 24
+
+www.dragino.com
+
+Test Command:
+AT+CLASS?
+
+Response:
+AT+CLASS: Get or Set the Device Class
+OK
+
+Test Command:
+
+Response:
+
+AT+CLASS=A
+OK
+While Error in format, return
+AT_PARAM_ERROR
+
+5.3 AT+DCS: Duty Cycle Setting
+AT+ DCS: Duty Cycle Setting
+Test Command:
+
+Response:
+
+AT+DCS?
+
+AT+DCS: Get or Set the ETSI Duty Cycle setting - 0=disable,
+1=enable - Only for testing
+OK
+
+Test Command:
+AT+DCS=?
+
+Response:
+1
+OK
+
+Test Command:
+
+Response:
+
+AT+DCS=1
+OK
+While Error in format, return
+AT_PARAM_ERROR
+
+5.4 AT+DR: Data Rate (Can Only be Modified after ADR=0)
+AT+DR: Data Rate
+Test Command:
+
+Response:
+
+AT+DR=?
+
+5
+OK
+
+Test Command:
+
+Response:
+
+AT+DR?
+
+Get or Set the Data Rate. (0-7 corresponding to DR_X)
+
+Test Command:
+
+OK
+Response:
+
+AT+DR=2
+
+Dragino LoRa® AT Command Sets
+
+Attention:Take effect after AT+ADR=0
+16 / 24
+
+www.dragino.com
+
+OK
+While Error in format, return
+AT_PARAM_ERROR
+
+5.5 AT+FCD: Frame Counter Downlink
+AT+ FCD: Frame Counter Downlink
+Test Command:
+
+Response:
+
+AT+FCD=?
+
+0
+OK
+
+Test Command:
+AT+FCD?
+
+Response:
+AT+FCD: Get or Set the Frame Counter Downlink
+OK
+
+Test Command:
+
+Response:(System will write new value to FCD)
+
+AT+FCD=10
+OK
+While Error in format, return
+AT_PARAM_ERROR
+
+5.6 AT+FCU: Frame Counter Uplink
+AT+ FCU: Frame Counter Uplink
+Test Command:
+
+Response:
+
+AT+FCU=?
+
+0
+OK
+
+Test Command:
+AT+FCU?
+
+Response:
+AT+FCU: Get or Set the Frame Counter Uplink
+OK
+
+Test Command:
+
+Response:
+
+AT+FCU=10
+OK
+While Error in format, return
+AT_PARAM_ERROR
+
+Dragino LoRa® AT Command Sets
+
+17 / 24
+
+5.7 AT+JN1DL: Join Accept Delay1
+
+www.dragino.com
+
+AT+ JN1DL: Join Accept Delay1
+Test Command:
+
+Response:
+
+AT+JN1DL=?
+
+5000
+OK
+
+Test Command:
+
+Response:
+
+AT+JN1DL?
+
+AT+JN1DL: Get or Set the Join Accept Delay between the
+end of the Tx and the Join Rx Window 1 in ms
+OK
+
+Test Command:
+AT+JN1DL=10000
+
+Response:
+OK
+While Error in format, return
+AT_PARAM_ERROR/AT_BUSY_ERROR
+
+5.8 AT+JN2DL: Join Accept Delay2
+AT+ JN2DL: Join Accept Delay2
+Test Command:
+
+Response:
+
+AT+JN2DL=?
+
+6000
+OK
+
+Test Command:
+
+Response:
+
+AT+JN2DL?
+
+AT+JN2DL: Get or Set the Join Accept Delay between the
+end of the Tx and the Join Rx Window 2 in ms
+OK
+
+Test Command:
+AT+JN2DL=20000
+
+Response:
+OK
+While Error in format, return
+AT_PARAM_ERROR/AT_BUSY_ERROR
+
+5.9 AT+PNM: Public Network Mode
+AT+ PNM: Public Network Mode
+Test Command:
+
+Response:
+
+AT+PNM=?
+
+1
+
+Dragino LoRa® AT Command Sets
+
+18 / 24
+
+www.dragino.com
+
+OK
+Test Command:
+AT+PNM?
+
+Response:
+AT+PNM: Get or Set the public network mode. (0: off, 1:
+on)
+OK
+
+Test Command:
+AT+PNM=1
+
+Response:(System will write new value to PNM)
+OK
+While Error in format, return
+AT_PARAM_ERROR/AT_BUSY_ERROR
+
+5.10 AT+RX1DL: Receive Delay1
+AT+ RX1DL: Receive Delay1
+Test Command:
+
+Response:
+
+AT+RX1DL=?
+
+1000
+OK
+
+Test Command:
+AT+RX1DL?
+
+Response:
+AT+RX1DL: Get or Set the delay between the end of the Tx
+and the Rx Window 1 in ms
+OK
+
+Test Command:
+AT+RX1DL=1500
+
+Response:
+OK
+While Error in format, return
+AT_BUSY_ERROR/AT_PARAM_ERROR
+
+5.11 AT+RX2DL: Receive Delay2
+AT+ RX2DL: Receive Delay2
+Test Command:
+AT+RX2DL=?
+
+Response:
+2000
+OK
+
+Test Command:
+AT+RX2DL?
+
+Response:
+AT+RX2DL: Get or Set the delay between the end of the Tx
+and the Rx Window 2 in ms
+
+Dragino LoRa® AT Command Sets
+
+19 / 24
+
+www.dragino.com
+
+OK
+Test Command:
+AT+RX2DL=2500
+
+Response:
+OK
+While Error in format, return
+AT_BUSY_ERROR/AT_PARAM_ERROR
+
+5.12 AT+RX2DR: Rx2 Window Data Rate
+AT+ RX2DR: Rx2 Window Data Rate
+Test Command:
+AT+RX2DR=?
+
+Response:
+OK
+
+Test Command:
+
+Response:
+
+AT+RX2DR?
+
+AT+RX2DR: Get or Set the Rx2 window data rate (0-7
+corresponding to DR_X)
+OK
+
+Test Command:
+
+Response:
+
+AT+RX2DR=6
+OK
+Response:
+While Error in format, return
+AT_PARAM_ERROR
+
+5.13 AT+RX2FQ: Rx2 Window Frequency
+AT+ RX2FQ: Rx2 Window Frequency
+Test Command:
+AT+RX2FQ=?
+
+Response:
+434665000
+OK
+
+Test Command:
+
+Response:
+
+AT+RX2FQ?
+
+AT+RX2FQ: Get or Set the Rx2 window frequency
+OK
+
+Test Command:
+AT+RX2FQ=434665000
+
+Response:
+OK
+While Error in format, return
+AT_BUSY_ERROR / AT_BUSY_ERROR
+
+Dragino LoRa® AT Command Sets
+
+20 / 24
+
+www.dragino.com
+
+5.14 AT+TXP: Transmit Power
+AT+ TXP: Transmit Power
+Test Command:
+
+Response:
+
+AT+TXP=?
+
+0
+OK
+
+Test Command:
+
+Response:
+
+AT+TXP?
+
+AT+TXP: Get or Set the Transmit Power (0-5, MAX:0, MIN:5,
+according to LoRaWAN Spec)
+OK
+
+Test Command:
+AT+ TXP=1
+
+Response:
+OK
+While Error in format, return
+AT_PARAM_ERROR
+
+5.15 AT+RSSI: RSSI of the Last Received Packet
+AT+ RSSI: RSSI of the Last Received Packet
+Test Command:
+
+Response:
+
+AT+RSSI=?
+
+0
+OK
+
+Test Command:
+
+Response:
+
+AT+RSSI?
+
+AT+RSSI: Get the RSSI of the last received packet
+OK
+
+5.16 AT+SNR: SNR of the Last Received Packet
+AT+ SNR: SNR of the Last Received Packet
+Test Command:
+AT+SNR=?
+
+Response:
+0
+OK
+
+Test Command:
+
+Response:
+
+AT+SNR?
+
+AT+SNR: Get the SNR of the last received packet
+OK
+
+Dragino LoRa® AT Command Sets
+
+21 / 24
+
+5.17 AT+PORT: Application Port
+
+www.dragino.com
+
+AT+PORT: Application Port
+Test Command:
+
+Response:
+
+AT+PORT=21
+OK
+Test Command:
+
+Response:
+
+AT+PORT?
+
+AT+PORT: Get or set the application port
+OK
+
+Test Command:
+
+Response:
+
+AT+PORT=?
+
+21
+OK
+
+5.18 AT+ CHS: Single Channel Mode
+AT+ CHS: Single Channel Mode
+Test Command:
+AT+ CHS=?
+
+Response:
+0
+OK
+
+Test Command:
+
+Response:
+
+AT+ CHS?
+
+AT+CHS: Get or Set Frequency (Unit: Hz) for Single Channel
+Mode
+OK
+
+Test Command:
+
+Response:
+
+AT+ CHS=868100000
+OK
+
+5.19 AT+ CHE: Eight Channel Mode
+AT+ CHE: Eight Channel Mode
+Test Command:
+AT+ CHE=?
+
+Response:
+1
+902.3 902.5 902.7 902.9 903.1 903.3 903.5 903.7
+OK
+
+Test Command:
+
+Response:
+
+AT+ CHE?
+
+AT+CHE: Get or Set eight channels mode,Only for
+US915,AU915,CN470
+
+Dragino LoRa® AT Command Sets
+
+22 / 24
+
+www.dragino.com
+
+OK
+Test Command:
+AT+ CHE=1
+
+Response:
+OK
+
+CHE
+0
+11
+12
+
+CN470 Uplink Channels(125KHz,4/5,Unit:MHz,CHS=0)
+ENABLE Channel 80-95
+486.3 486.5 486.7 486.9 487.1 487.3 487.5 487.7 Channel 80-87
+487.9 488.1 488.3 488.5 488.7 488.9 489.1 489.3 Channel 88-95
+
+CHE
+0
+1
+2
+3
+4
+5
+6
+7
+8
+
+902.3
+903.9
+905.5
+907.1
+908.7
+910.3
+911.9
+913.5
+
+US915 Uplink Channels(125KHz,4/5,Unit:MHz,CHS=0)
+ENABLE Channel 0-63
+902.5 902.7 902.9 903.1 903.3 903.5 903.7 Channel 0-7
+904.1 904.3 904.5 904.7 904.9 905.1 905.3 Channel 8-15
+905.7 905.9 906.1 906.3 906.5 906.7 906.9 Channel 16-23
+907.3 907.5 907.7 907.9 908.1 908.3 908.5 Channel 24-31
+908.9 909.1 909.3 909.5 909.7 909.9 910.1 Channel 32-39
+910.5 910.7 910.9 911.1 911.3 911.5 911.7 Channel 40-47
+912.1 912.3 912.5 912.7 912.9 913.1 913.3 Channel 48-55
+913.7 913.9 914.1 914.3 914.5 914.7 914.9 Channel 56-63
+
+915.2
+916.8
+918.4
+920
+921.6
+923.2
+924.8
+926.4
+
+AU915 Uplink Channels(125KHz,4/5,Unit:MHz, CHS=0)
+ENABLE Channel 0-63
+915.4 915.6 915.8 916 916.2 916.4 916.6
+Channel 0-7
+917 917.2 917.4 917.6 917.8 918 918.2 Channel 8-15
+918.6 918.8 919 919.2 919.4 919.6 919.8 Channel 16-23
+920.2 920.4 920.6 920.8 921 921.2 921.4 Channel 24-31
+921.8 922 922.2 922.4 922.6 922.8 923 Channel 32-39
+923.4 923.6 923.8 924 924.2 924.4 924.6 Channel 40-47
+925 925.2 925.4 925.6 925.8 926 926.2 Channel 48-55
+926.6 926.8 927 927.2 927.4 927.6 927.8 Channel 56-63
+
+CHE
+0
+1
+2
+3
+4
+5
+6
+7
+8
+
+Dragino LoRa® AT Command Sets
+
+23 / 24
+
+www.dragino.com
+
+5.20 AT+SLEEP: Set sleep mode
+AT+SLEEP: Set sleep mode(1:Enable,0:Disable)
+Test Command:
+AT+ SLEEP=?
+
+Response:
+1
+OK
+
+Test Command:
+
+Response:
+
+AT+ SLEEP?
+
+Set sleep mode
+OK
+
+Test Command:
+
+Response:
+
+AT+ SLEEP
+OK
+
+5.21 AT+DEVICETIMEREQ: Device time req
+AT+DEVICETIMEREQ: Device time req
+Test Command:
+
+Response:
+
+AT+DEVICETIMEREQ=?
+
+AT_PARAM_ERROR
+OK
+
+Test Command:
+
+Response:
+
+AT+DEVICETIMEREQ?
+
+Device time req
+OK
+
+Test Command:
+AT+DEVICETIMEREQ=1
+
+Response:
+Sync time ok
+OK
+
+5.22 AT+BAT: Get the current battery voltage in Mv
+AT+BAT: Get the current battery voltage in mV
+Test Command:
+
+Response:
+
+AT+BAT=?
+
+3329
+OK
+
+Test Command:
+AT+BAT?
+
+Response:
+AT+BAT: Get the current battery voltage in Mv
+OK
+
+Dragino LoRa® AT Command Sets
+
+24 / 24
+
+www.dragino.com
+
+Test Command:
+AT+BAT=1
+
+Response:
+AT_PARAM_ERROR
+OK
+
+5.23 AT+RJTDC: Get or set the ReJoin data transmission interval in min
+AT+RJTDC: Get or set the ReJoin data transmission interval in min
+Test Command:
+
+Response:
+
+AT+RJTDC=?
+
+20
+OK
+
+Test Command:
+AT+RJTDC?
+
+Response:
+Get or set the ReJoin data transmission interval in min
+OK
+
+Test Command:
+AT+RJTDC=20
+
+Response:
+OK
+
+5.24 AT+RPL: Get or set response level
+AT+RPL: Get or set response level
+Test Command:
+
+Response:
+
+AT+RPL=?
+
+0
+OK
+
+Test Command:
+AT+RPL?
+
+Response:
+Get or set response level
+OK
+
+Test Command:
+AT+RPL=0
+
+Response:
+OK
+
+Dragino LoRa® AT Command Sets
+
+25 / 24
+
+5.25 AT+TIMESTAMP: Get or Set UNIX timestamp in second
+
+www.dragino.com
+
+AT+TIMESTAMP: Get or Set UNIX timestamp in second
+Test Command:
+AT+TIMESTAMP=?
+
+Response:
+systime= 1970/1/1 00:17:36 (1056)
+OK
+
+Test Command:
+AT+TIMESTAMP?
+
+Response:
+Get or Set UNIX timestamp in second
+OK
+
+Test Command:
+AT+TIMESTAMP=1670806785
+
+Response:
+OK
+
+5.26 AT+LEAPSEC: Get or Set Leap Second
+AT+LEAPSEC: Get or Set Leap Second
+Test Command:
+AT+LEAPSEC=?
+
+Response:
+18
+OK
+
+Test Command:
+AT+LEAPSEC?
+
+Response:
+Get or Set Leap Second
+OK
+
+Test Command:
+AT+LEAPSEC=3
+
+Response:
+OK
+
+5.27 AT+SYNCMOD: Get or Set time synchronization method
+AT+LEAPSEC: Get or Set Leap Second
+Test Command:
+AT+SYNCMOD=?
+
+Test Command:
+AT+SYNCMOD?
+
+Response:
+0
+OK
+Response:
+Get or Set time synchronization method
+OK
+
+Test Command:
+AT+SYNCMOD=1
+
+Response:
+OK
+
+Dragino LoRa® AT Command Sets
+
+26 / 24
+
+www.dragino.com
+
+5.28 AT+SYNCTDC: Get or Set time synchronization interval in day
+AT+SYNCTDC: Get or Set time synchronization method
+Test Command:
+AT+SYNCTDC=?
+
+Response:
+20
+OK
+
+Test Command:
+AT+SYNCTDC?
+
+Response:
+Get or Set time synchronization interval in day
+OK
+
+Test Command:
+AT+SYNCTDC=20
+
+Response:
+OK
+
+5.29 AT+DDETECT: Get or set the downlink detection
+AT+DDETECT: Get or set the downlink detection
+Test Command:
+AT+DDETECT=?
+
+Test Command:
+AT+DDETECT?
+
+Response:
+0,1440,2880
+OK
+Response:
+Get or set the downlink detection
+OK
+
+Test Command:
+AT+SYNCTDC=1,1440,2880
+
+Response:
+OK
+
+5.30 AT+SETMAXNBTRANS: Get or set the max nbtrans in LinkADR
+AT+SETMAXNBTRANS: Get or set the max nbtrans in LinkADR
+Test Command:
+AT+SETMAXNBTRANS=?
+
+Test Command:
+
+AT+SETMAXNBTRANS?
+
+Response:
+1,0
+OK
+Response:
+Get or set the max nbtrans in LinkADR
+OK
+
+Dragino LoRa® AT Command Sets
+
+27 / 24
+
+www.dragino.com
+
+Test Command:
+AT+SETMAXNBTRANS=1,1
+
+Response:
+OK
+
+5.31 AT+SENDB: Send hexadecimal data along with the application port and confirm
+status
+AT+SENDB= Send hexadecimal data along with the application port and confirm status
+Test Command:
+AT+SENDB=?
+
+Test Command:
+AT+SENDB?
+
+Response:
+AT_PARAM_ERROR
+
+Response:
+Send hexadecimal data along with the application port and
+confirm status
+OK
+
+Test Command:
+AT+SENDB=0,2,4,11223344
+
+Response:
+***** UpLinkCounter= 1 *****
+TX on freq 904.100 MHz at DR 3
+OK
+
+Dragino LoRa® AT Command Sets
+
+28 / 24
+
+

@@ -104,6 +104,17 @@
                 <option value="lastYear">Last Year</option>
               </select>
             </div>
+            
+            <div class="control-group">
+              <label for="dataParameter">Data Parameter</label>
+              <select id="dataParameter" class="control-select" multiple>
+                <option value="rainfall_in" selected>Rainfall (inches)</option>
+                <option value="weight_g">Rainfall Weight (grams)</option>
+                <option value="temperature">Temperature (°F)</option>
+                <option value="humidity">Humidity (%)</option>
+              </select>
+              <div class="multi-select-help">Hold Ctrl/Cmd to select multiple parameters</div>
+            </div>
           </div>
         </div>
 
@@ -114,18 +125,18 @@
         <div class="comparison-stats">
           <div class="stat-box">
             <h4>Current Period</h4>
-            <p>Total Rainfall: <span id="currentTotal">-</span></p>
-            <p>Peak Rainfall: <span id="currentPeak">-</span></p>
+            <p>Total Rainfall: <span id="currentTotal">Fetching...</span></p>
+            <p>Peak Rainfall: <span id="currentPeak">Fetching...</span></p>
           </div>
           <div class="stat-box">
             <h4>Comparison Period</h4>
-            <p>Total Rainfall: <span id="comparisonTotal">-</span></p>
-            <p>Peak Rainfall: <span id="comparisonPeak">-</span></p>
+            <p>Total Rainfall: <span id="comparisonTotal">Fetching...</span></p>
+            <p>Peak Rainfall: <span id="comparisonPeak">Fetching...</span></p>
           </div>
           <div class="stat-box">
             <h4>Differences</h4>
-            <p>Total Difference: <span id="totalDiff">-</span></p>
-            <p>Peak Difference: <span id="peakDiff">-</span></p>
+            <p>Total Difference: <span id="totalDiff">Fetching...</span></p>
+            <p>Peak Difference: <span id="peakDiff">Fetching...</span></p>
           </div>
         </div>
       </div>
@@ -134,7 +145,6 @@
       <h2 id="weather-detective-heading">Weather Detective</h2>
       <div class="content-box game-box" aria-labelledby="weather-detective-heading">
         <div class="game-preview">
-          <img src="images/weather-detective-preview.png" alt="Weather Detective Game Preview" class="preview-image">
           <h3>Test Your Weather Knowledge!</h3>
           <p>Make predictions, solve weather mysteries, and learn about rainfall patterns in this interactive game.</p>
           <button class="play-button" onclick="startWeatherDetective()">Play Now</button>
