@@ -335,6 +335,160 @@ content-box.dark-mode {
   transform: scale(.95);
 }
 
+/* Dark Mode Toggle Animation */
+#dark-mode-toggle {
+  position: relative;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  width: 50px;
+  height: 26px;
+  border-radius: 13px;
+  background-color: #f0f0f0;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 3px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.dark-mode #dark-mode-toggle {
+  background-color: #2d2d2d;
+  justify-content: flex-end;
+}
+
+#dark-mode-toggle::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ffca28;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode #dark-mode-toggle::before {
+  background-color: #82b1ff;
+  transform: translateX(24px);
+}
+
+#dark-mode-toggle::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.dark-mode #dark-mode-toggle::after {
+  opacity: 1;
+  box-shadow: 6px -2px 0 0 #2d2d2d inset;
+  transform: translateX(24px);
+}
+
+/* Rays animation for sun */
+.toggle-rays {
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.toggle-ray {
+  position: absolute;
+  width: 2px;
+  height: 4px;
+  background-color: #ff9800;
+  border-radius: 2px;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.dark-mode .toggle-rays {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.5);
+}
+
+/* Position the rays around the sun */
+.toggle-ray:nth-child(1) { top: -5px; left: 9px; height: 3px; }
+.toggle-ray:nth-child(2) { top: 2px; right: -2px; transform: rotate(45deg); }
+.toggle-ray:nth-child(3) { top: 9px; right: -5px; width: 3px; transform: rotate(90deg); }
+.toggle-ray:nth-child(4) { bottom: 2px; right: -2px; transform: rotate(135deg); }
+.toggle-ray:nth-child(5) { bottom: -5px; left: 9px; height: 3px; transform: rotate(180deg); }
+.toggle-ray:nth-child(6) { bottom: 2px; left: -2px; transform: rotate(225deg); }
+.toggle-ray:nth-child(7) { top: 9px; left: -5px; width: 3px; transform: rotate(270deg); }
+.toggle-ray:nth-child(8) { top: 2px; left: -2px; transform: rotate(315deg); }
+
+/* Stars for dark mode */
+.toggle-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.dark-mode .toggle-stars {
+  opacity: 1;
+}
+
+.toggle-star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle 2s infinite;
+}
+
+.toggle-star:nth-child(1) {
+  width: 2px;
+  height: 2px;
+  top: 5px;
+  left: 10px;
+  animation-delay: 0.3s;
+}
+
+.toggle-star:nth-child(2) {
+  width: 1px;
+  height: 1px;
+  top: 15px;
+  left: 5px;
+  animation-delay: 0.7s;
+}
+
+.toggle-star:nth-child(3) {
+  width: 1.5px;
+  height: 1.5px;
+  top: 10px;
+  left: 20px;
+  animation-delay: 1.1s;
+}
+
+.toggle-star:nth-child(4) {
+  width: 1px;
+  height: 1px;
+  top: 20px;
+  left: 15px;
+  animation-delay: 1.5s;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -933,5 +1087,331 @@ body.dark-mode .data-viz-box {
   
   .chart-container {
     height: 300px;
+  }
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 80, 158, 0.2);
+}
+
+.dashboard-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dashboard-tab {
+  background-color: rgba(0, 80, 158, 0.1);
+  border: none;
+  border-radius: 20px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #00509e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-tab:hover {
+  background-color: rgba(0, 80, 158, 0.2);
+}
+
+.dashboard-tab.active {
+  background-color: #00509e;
+  color: white;
+}
+
+.dark-mode .dashboard-tab {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #89CFF0;
+}
+
+.dark-mode .dashboard-tab:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .dashboard-tab.active {
+  background-color: #89CFF0;
+  color: #1e1e1e;
+}
+
+.current-conditions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 200px;
+}
+
+.weather-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.location {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.temp-container {
+  display: flex;
+  align-items: baseline;
+}
+
+.temperature {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.unit {
+  font-size: 1.2rem;
+  margin-left: 0.25rem;
+}
+
+.condition {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+.dark-mode .condition {
+  color: #b0b0b0;
+}
+
+.dashboard-main {
+  position: relative;
+  min-height: 400px;
+}
+
+.dashboard-view {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dashboard-view.active {
+  display: block;
+  opacity: 1;
+}
+
+.overview-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 80, 158, 0.1);
+  font-size: 0.85rem;
+}
+
+.chart-container {
+  width: 100%;
+  height: 300px;
+  margin: 1rem 0;
+}
+
+.hourly-forecast, .daily-forecast, .weekly-forecast {
+  padding: 1rem 0;
+}
+
+/* Mobile optimization for dashboard */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .dashboard-tabs {
+    order: 2;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    justify-content: flex-start;
+    width: 100%;
+  }
+  
+  .dashboard-tab {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  
+  .current-conditions {
+    order: 1;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .overview-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Animations for Dashboard */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-view.active {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.dashboard-tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #00509e;
+  transition: all 0.3s ease;
+}
+
+.dashboard-tab:hover::after {
+  left: 0;
+  width: 100%;
+}
+
+.dashboard-tab.active::after {
+  left: 0;
+  width: 100%;
+  background: white;
+}
+
+.dark-mode .dashboard-tab.active::after {
+  background: #1e1e1e;
+}
+
+/* Mobile Bottom Navigation */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 0;
+  transition: transform 0.3s ease;
+}
+
+.mobile-nav.hidden {
+  transform: translateY(100%);
+}
+
+.dark-mode .mobile-nav {
+  background-color: rgba(30, 30, 30, 0.95);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nav-items {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #00509e;
+  text-decoration: none;
+  padding: 8px 0;
+  transition: background-color 0.2s ease;
+}
+
+.dark-mode .nav-item {
+  color: #89CFF0;
+}
+
+.nav-item.active {
+  color: #00509e;
+  background-color: rgba(0, 80, 158, 0.1);
+}
+
+.dark-mode .nav-item.active {
+  color: #89CFF0;
+  background-color: rgba(137, 207, 240, 0.1);
+}
+
+.nav-icon {
+  font-size: 1.3rem;
+  margin-bottom: 2px;
+}
+
+.nav-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* Show mobile navigation only on small screens */
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: block;
+  }
+  
+  main, .page-container {
+    padding-bottom: 70px; /* Add padding to account for fixed bottom nav */
+  }
+  
+  footer {
+    margin-bottom: 60px; /* Ensure footer isn't covered by mobile nav */
+  }
+  
+  /* Add swipe gesture support styles */
+  .swipe-area {
+    position: relative;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  
+  .swipe-container {
+    display: flex;
+    transition: transform 0.3s ease;
+  }
+  
+  .swipe-item {
+    flex: 0 0 100%;
+    width: 100%;
   }
 }
