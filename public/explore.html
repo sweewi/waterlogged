@@ -42,6 +42,83 @@
       max-width: 800px;
       padding: 0 20px;
     }
+    
+    /* Improved menu styles to match photos.html */
+    #menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 0 0 5px 5px;
+      z-index: 200;
+    }
+    
+    #menu.hidden {
+      display: none;
+    }
+    
+    #menu li {
+      display: block;
+      margin: 0;
+      padding: 10px 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    #menu li:last-child {
+      border-bottom: none;
+    }
+    
+    #menu li a {
+      color: #00509e;
+      text-decoration: none;
+      font-weight: bold;
+      display: block;
+    }
+    
+    #menu li a:hover {
+      color: #003f7f;
+    }
+    
+    .dark-mode #menu {
+      background-color: #333;
+    }
+    
+    .dark-mode #menu li {
+      border-bottom: 1px solid #444;
+    }
+    
+    .dark-mode #menu li a {
+      color: #89CFF0;
+    }
+    
+    /* Dark mode toggle styling */
+    #dark-mode-toggle {
+      background-color: #00509e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    #dark-mode-toggle:hover {
+      background-color: #003f7f;
+    }
+    
+    .dark-mode #dark-mode-toggle {
+      background-color: #89CFF0;
+      color: #1e1e1e;
+    }
+    
+    .dark-mode #dark-mode-toggle:hover {
+      background-color: #6bafcf;
+    }
   </style>
   <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
@@ -190,22 +267,8 @@
 
   <!-- JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/js/rain-comparison.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Hamburger menu functionality
-      const menuButton = document.getElementById('menu-button');
-      const menu = document.getElementById('menu');
-      if (menuButton && menu) {
-        menuButton.addEventListener('click', () => {
-          menu.classList.toggle('hidden');
-          menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
-          menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
-        });
-      }
-    });
-  </script>
-  <script src="js/main.js"></script>
-  <script src="js/explore.js"></script>
+  <script src="/js/rain-comparison.js" type="module"></script>
+  <script src="js/main.js" type="module"></script>
+  <script src="js/explore.js" type="module"></script>
 </body>
 </html>

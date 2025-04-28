@@ -18,60 +18,7 @@ body.dark-mode {
   color: #e0e0e0;
 }
 
-header {
-  width: 100%;
-  text-align: center;
-  padding-top: 80px;
-  margin-bottom: 20px;
-  transition: background-color .3s ease, color .3s ease;
-}
-
-header h1 {
-  font-family: 'Roboto Slab', serif;
-  color: #00509e;
-  font-size: 2.5rem;
-  margin: 0;
-}
-
-header.dark-mode h1 {
-  color: #fff;
-}
-
-header p {
-  font-family: 'Roboto', sans-serif;
-  color: #333;
-  font-size: 1.2rem;
-  margin: 10px 0 0;
-}
-
-header.dark-mode p {
-  color: #b0b0b0;
-}
-
-.page-container {
-  padding-top: 60px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.subtitle {
-  font-family: 'Roboto', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  text-align: center; /* Ensure text is centered */
-  color: #555;
-  margin: 80px auto 40px;
-  max-width: 800px;
-  padding: 0 20px; /* Added horizontal padding for better mobile display */
-  opacity: 1;
-  visibility: visible;
-}
-
-subtitle.dark-mode {
-  color: #b0b0b0;
-}
-
+/* Fix for navigation bar layout */
 nav {
   position: fixed;
   top: 0;
@@ -81,7 +28,7 @@ nav {
   box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
   z-index: 1000;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Changed back to space-between */
   align-items: center;
   box-sizing: border-box;
   padding: 10px 20px;
@@ -95,26 +42,21 @@ nav.dark-mode {
   box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
 }
 
-nav .toolbar-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #00509e;
-}
-
-nav.dark-mode .toolbar-title {
-  color: #e0e0e0;
+/* Left side of navbar - Menu button and menu */
+#menu-container {
+  position: relative;
+  z-index: 1100;
 }
 
 #menu-button {
   background: none;
   border: none;
-  cursor: pointer; /* Ensure the button is clickable */
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 5px;
   padding: 10px;
-  z-index: 1100; /* Ensure the button is above other elements */
-  position: relative;
+  z-index: 1100;
 }
 
 #menu-button span {
@@ -126,53 +68,77 @@ nav.dark-mode .toolbar-title {
   transition: background-color 0.3s ease;
 }
 
-#menu-button:hover {
-  opacity: 0.8; /* Add hover effect for better feedback */
-}
-
-#menu-button:active {
-  transform: scale(0.95); /* Add active effect for better feedback */
-}
-
-#menu-button.dark-mode span {
-  background-color: #e0e0e0;
-}
-
 #menu {
   display: none;
   position: absolute;
   top: 60px;
-  left: 10px;
+  left: 0;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 10px;
   list-style: none;
   z-index: 1000;
+  min-width: 150px;
 }
 
-#menu.hidden {
-  display: none;
-}
-
-.hidden {
-  display: none !important;
-}
-
-#menu.dark-mode {
-  background-color: #1e1e1e;
-}
-
-#menu li {
-  margin: 5px 0;
-}
-
-#menu a {
-  text-decoration: none;
+/* Center - Logo */
+nav .toolbar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
   color: #00509e;
+  text-align: center;
+  flex-grow: 1; /* Allow title to take available space */
 }
 
-#menu.dark-mode a {
-  color: #e0e0e0;
+/* Right side - Dark mode toggle */
+#dark-mode-toggle {
+  background-color: #00509e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 1200;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#dark-mode-toggle:hover {
+  background-color: #003f7f;
+  transform: scale(1.05);
+}
+
+#dark-mode-toggle:active {
+  transform: scale(0.95);
+}
+
+.dark-mode #dark-mode-toggle {
+  background-color: #82b1ff;
+  color: #000;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  nav {
+    padding: 10px;
+  }
+  
+  nav .toolbar-title {
+    font-size: 1.3rem;
+  }
+  
+  #dark-mode-toggle {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  #menu {
+    width: 100%;
+    left: 0;
+    top: 60px;
+  }
 }
 
 h2 {
@@ -311,201 +277,45 @@ content-box.dark-mode {
   z-index: 2001;
 }
 
-#dark-mode-toggle {
-  position: sticky;
-  top: 10px;
-  right: 20px;
-  background-color: #00509e;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
-  cursor: pointer;
-  font-size: 1rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
-  transition: background-color .3s ease, transform .2s ease;
-}
-
-#dark-mode-toggle:hover {
-  background-color: #003f7f;
-  transform: scale(1.05);
-}
-
-#dark-mode-toggle:active {
-  transform: scale(.95);
-}
-
-/* Dark Mode Toggle Animation */
-#dark-mode-toggle {
-  position: relative;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  width: 50px;
-  height: 26px;
-  border-radius: 13px;
-  background-color: #f0f0f0;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0 3px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-.dark-mode #dark-mode-toggle {
-  background-color: #2d2d2d;
-  justify-content: flex-end;
-}
-
-#dark-mode-toggle::before {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #ffca28;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.dark-mode #dark-mode-toggle::before {
-  background-color: #82b1ff;
-  transform: translateX(24px);
-}
-
-#dark-mode-toggle::after {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  opacity: 0;
-}
-
-.dark-mode #dark-mode-toggle::after {
-  opacity: 1;
-  box-shadow: 6px -2px 0 0 #2d2d2d inset;
-  transform: translateX(24px);
-}
-
-/* Rays animation for sun */
-.toggle-rays {
-  position: absolute;
-  top: 50%;
-  left: 3px;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  transition: all 0.3s ease;
-  pointer-events: none;
-}
-
-.toggle-ray {
-  position: absolute;
-  width: 2px;
-  height: 4px;
-  background-color: #ff9800;
-  border-radius: 2px;
-  opacity: 1;
-  transition: all 0.3s ease;
-}
-
-.dark-mode .toggle-rays {
-  opacity: 0;
-  transform: translateY(-50%) scale(0.5);
-}
-
-/* Position the rays around the sun */
-.toggle-ray:nth-child(1) { top: -5px; left: 9px; height: 3px; }
-.toggle-ray:nth-child(2) { top: 2px; right: -2px; transform: rotate(45deg); }
-.toggle-ray:nth-child(3) { top: 9px; right: -5px; width: 3px; transform: rotate(90deg); }
-.toggle-ray:nth-child(4) { bottom: 2px; right: -2px; transform: rotate(135deg); }
-.toggle-ray:nth-child(5) { bottom: -5px; left: 9px; height: 3px; transform: rotate(180deg); }
-.toggle-ray:nth-child(6) { bottom: 2px; left: -2px; transform: rotate(225deg); }
-.toggle-ray:nth-child(7) { top: 9px; left: -5px; width: 3px; transform: rotate(270deg); }
-.toggle-ray:nth-child(8) { top: 2px; left: -2px; transform: rotate(315deg); }
-
-/* Stars for dark mode */
-.toggle-stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.dark-mode .toggle-stars {
-  opacity: 1;
-}
-
-.toggle-star {
-  position: absolute;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0;
-  animation: twinkle 2s infinite;
-}
-
-.toggle-star:nth-child(1) {
-  width: 2px;
-  height: 2px;
-  top: 5px;
-  left: 10px;
-  animation-delay: 0.3s;
-}
-
-.toggle-star:nth-child(2) {
-  width: 1px;
-  height: 1px;
-  top: 15px;
-  left: 5px;
-  animation-delay: 0.7s;
-}
-
-.toggle-star:nth-child(3) {
-  width: 1.5px;
-  height: 1.5px;
-  top: 10px;
-  left: 20px;
-  animation-delay: 1.1s;
-}
-
-.toggle-star:nth-child(4) {
-  width: 1px;
-  height: 1px;
-  top: 20px;
-  left: 15px;
-  animation-delay: 1.5s;
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.8; }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+  nav {
+    padding: 10px;
+    justify-content: center; /* Center items in mobile view */
+    position: relative; /* Changed to relative for better positioning */
   }
-  to {
-    opacity: 1;
+  
+  nav .toolbar-title {
+    margin: 0; /* Center the title in mobile view */
+    font-size: 1.3rem; /* Slightly smaller font for mobile */
   }
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
+  
+  #menu-button {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+  
+  #dark-mode-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    max-width: 90px;
+  }
+  
+  #menu {
+    top: 60px;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark-mode #menu {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -1414,4 +1224,73 @@ body.dark-mode .data-viz-box {
     flex: 0 0 100%;
     width: 100%;
   }
+}
+
+/* Photo gallery styles */
+.gallery-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.gallery-image-container {
+  flex: 1;
+  text-align: center;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.gallery-image:hover {
+  transform: scale(1.01);
+}
+
+#prev-button, #next-button {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark-mode #prev-button, .dark-mode #next-button {
+  background-color: rgba(50, 50, 50, 0.7);
+  color: white;
+}
+
+#prev-button:hover, #next-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: scale(1.1);
+}
+
+.dark-mode #prev-button:hover, .dark-mode #next-button:hover {
+  background-color: rgba(70, 70, 70, 0.9);
+}
+
+.photo-caption {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  color: var(--text-color);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }

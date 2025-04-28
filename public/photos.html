@@ -1,95 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"> <!-- Set character encoding -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensure responsive design -->
-  <title>Photos - Waterlogged</title> <!-- Page title -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photos - Waterlogged</title>
   <style>
-    /* Critical CSS for above-the-fold content */
+    /* Basic styles */
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background-color: #add8e6;
       color: #333;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
-      overflow-x: hidden;
     }
+    
     nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
       background-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
+      padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
-      height: 60px;
-      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
     }
+    
     .subtitle {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 400;
       text-align: center;
-      color: #555;
-      margin: 20px auto;
-      max-width: 600px;
+      margin: 20px;
+      margin-top: 80px;
+      font-size: 1.2rem;
     }
-    /* Added specific styles to ensure footer stays at bottom */
-    .page-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    
     main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
       flex: 1;
     }
+    
+    h2 {
+      text-align: center;
+      color: #00509e;
+    }
+    
+    .content-box {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
     footer {
+      background-color: #00509e;
+      color: white;
+      text-align: center;
+      padding: 20px;
       margin-top: auto;
       width: 100%;
     }
+    
+    footer a {
+      color: yellow;
+      text-decoration: none;
+    }
+    
+    /* Gallery specific styles */
+    .gallery-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .gallery-image-container {
+      flex: 1;
+      text-align: center;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .gallery-image {
+      max-width: 100%;
+      max-height: 400px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    #prev-button, #next-button {
+      background-color: #00509e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 15px 20px;
+      font-size: 24px;
+      cursor: pointer;
+      min-width: 50px;
+      min-height: 50px;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    
+    #prev-button:hover, #next-button:hover {
+      background-color: #003f7f;
+    }
+    
+    .photo-caption {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-top: 15px;
+      padding: 0 20px;
+    }
+    
+    /* Menu styles */
+    #menu-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px;
+    }
+    
+    #menu-button span {
+      display: block;
+      width: 30px;
+      height: 4px;
+      background-color: #00509e;
+      border-radius: 2px;
+    }
+    
+    #menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 0 0 5px 5px;
+      z-index: 200;
+    }
+    
+    #menu.hidden {
+      display: none;
+    }
+    
+    #menu li {
+      display: block;
+      margin: 0;
+      padding: 10px 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    #menu li:last-child {
+      border-bottom: none;
+    }
+    
+    #menu li a {
+      color: #00509e;
+      text-decoration: none;
+      font-weight: bold;
+      display: block;
+    }
+    
+    #menu li a:hover {
+      color: #003f7f;
+    }
+    
+    .toolbar-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00509e;
+    }
+
+    /* Dark mode styles */
+    .dark-mode {
+      background-color: #1f1f1f;
+      color: #f0f0f0;
+    }
+
+    .dark-mode nav {
+      background-color: rgba(30, 30, 30, 0.8);
+    }
+
+    .dark-mode .content-box {
+      background-color: rgba(40, 40, 40, 0.9);
+    }
+
+    .dark-mode h2 {
+      color: #89CFF0;
+    }
+
+    .dark-mode #prev-button,
+    .dark-mode #next-button {
+      background-color: #89CFF0;
+      color: #1e1e1e;
+    }
+
+    .dark-mode #prev-button:hover,
+    .dark-mode #next-button:hover {
+      background-color: #6bafcf;
+    }
+
+    .dark-mode #menu {
+      background-color: #333;
+    }
+
+    .dark-mode #menu li {
+      border-bottom: 1px solid #444;
+    }
+
+    .dark-mode #menu li a {
+      color: #89CFF0;
+    }
+
+    .dark-mode .toolbar-title {
+      color: #89CFF0;
+    }
+
+    .dark-mode #menu-button span {
+      background-color: #89CFF0;
+    }
+
+    /* Dark mode toggle styling */
+    #dark-mode-toggle {
+      background-color: #00509e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    #dark-mode-toggle:hover {
+      background-color: #003f7f;
+    }
+    
+    .dark-mode #dark-mode-toggle {
+      background-color: #89CFF0;
+      color: #1e1e1e;
+    }
+    
+    .dark-mode #dark-mode-toggle:hover {
+      background-color: #6bafcf;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .gallery-image-container {
+        height: 300px;
+      }
+      
+      .gallery-image {
+        max-height: 300px;
+      }
+      
+      #prev-button, #next-button {
+        padding: 10px 15px;
+        font-size: 20px;
+      }
+    }
   </style>
-  <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
-  <meta name="description" content="Explore the WaterLogged photo gallery showcasing our rain gauge network and community science efforts.">
-  <meta name="keywords" content="WaterLogged, photos, rain gauge, community science, localized rainfall, Boston College">
-  <meta name="author" content="WaterLogged Team">
-  <meta property="og:title" content="WaterLogged Photo Gallery">
-  <meta property="og:description" content="Explore the WaterLogged photo gallery showcasing our rain gauge network and community science efforts.">
-  <meta property="og:image" content="https://via.placeholder.com/1200x630?text=WaterLogged+Photos">
-  <meta property="og:url" content="https://www.waterlogged-website.com/photos.html">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="WaterLogged Photo Gallery">
-  <meta name="twitter:description" content="Explore the WaterLogged photo gallery showcasing our rain gauge network and community science efforts.">
-  <meta name="twitter:image" content="https://via.placeholder.com/1200x630?text=WaterLogged+Photos">
 </head>
 <body>
   <!-- Navigation menu -->
   <nav>
-    <div id="menu-container" style="position: relative; z-index: 1100;">
+    <div id="menu-container">
       <button id="menu-button" aria-label="Toggle navigation menu">
         <span></span>
         <span></span>
         <span></span>
       </button>
     </div>
-    <ul id="menu" class="hidden" aria-hidden="true">
-      <li><a href="index.html" aria-label="Go to Home page">Home</a></li>
-      <li><a href="about.html" aria-label="Go to About page">About</a></li>
-      <li><a href="photos.html" aria-label="Go to Photos page">Photos</a></li>
-      <li><a href="explore.html" aria-label="Go to Explore page">Explore</a></li>
+    <ul id="menu" class="hidden">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="photos.html">Photos</a></li>
+      <li><a href="explore.html">Explore</a></li>
     </ul>
-    <span class="toolbar-title" aria-hidden="true">WATERLOGGED</span> <!-- Marked as decorative -->
-    <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">Dark Mode</button> <!-- Dark mode toggle button -->
+    <span class="toolbar-title">WATERLOGGED</span>
+    <button id="dark-mode-toggle">Dark Mode</button>
   </nav>
 
   <div class="page-container">
@@ -101,17 +309,16 @@
     <!-- Main content -->
     <main>
       <!-- Photo gallery section -->
-      <h2 id="photo-gallery-heading">Photo Gallery</h2>
-      <div class="content-box" aria-labelledby="photo-gallery-heading">
-        <div id="photo-gallery" class="gallery-container" role="region" aria-label="Photo gallery"> <!-- Added role and aria-label -->
-          <button id="prev-button" aria-label="Previous Photo">&lt;</button> <!-- Added aria-label -->
-          <picture>
-            <source id="gallery-image-source" srcset="https://via.placeholder.com/600x400.webp?text=Photo+1" type="image/webp">
-            <img id="gallery-image" src="https://via.placeholder.com/600x400?text=Photo+1" alt="Photo 1">
-          </picture>
-          <button id="next-button" aria-label="Next Photo">&gt;</button> <!-- Added aria-label -->
+      <h2>Photo Gallery</h2>
+      <div class="content-box">
+        <div id="photo-gallery" class="gallery-container">
+          <button id="prev-button" class="nav-button" aria-label="Previous Photo">&lt;</button>
+          <div class="gallery-image-container">
+            <img id="gallery-image" src="" alt="Waterlogged Project photo" class="gallery-image">
+          </div>
+          <button id="next-button" class="nav-button" aria-label="Next Photo">&gt;</button>
         </div>
-        <p id="photo-caption" aria-live="polite">Photo 1 of 10</p> <!-- Added aria-live -->
+        <p id="photo-caption" class="photo-caption"></p>
       </div>
     </main>
   </div>
@@ -121,33 +328,124 @@
     Learn more about <a href="https://www.bc.edu/bc-web/schools/morrissey/departments/engineering.html" target="_blank">Boston College Human-Centered Engineering</a>.
   </footer>
 
-  <!-- JavaScript for menu toggle and photo gallery -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const menuButton = document.getElementById('menu-button');
-        const menu = document.getElementById('menu');
-        if (menuButton && menu) {
-            menuButton.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-                menu.style.display = menu.classList.contains('hidden') ? 'none' : 'block';
-                menu.setAttribute('aria-hidden', menu.classList.contains('hidden'));
-            });
-        } else {
-            console.error('Menu button or menu element not found.');
-        }
+    // Simple Photo Gallery Script that works without external dependencies
+    (function() {
+      // This will run as soon as the browser loads the page
+      // Gallery elements
+      const galleryImage = document.getElementById('gallery-image');
+      const photoCaption = document.getElementById('photo-caption');
+      const prevButton = document.getElementById('prev-button');
+      const nextButton = document.getElementById('next-button');
+      const menuButton = document.getElementById('menu-button');
+      const menu = document.getElementById('menu');
+      const darkModeToggle = document.getElementById('dark-mode-toggle');
+      
+      // Toggle menu
+      if (menuButton && menu) {
+        menuButton.onclick = function() {
+          menu.classList.toggle('hidden');
+        };
+      }
 
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        if (darkModeToggle) {
-            darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                document.querySelectorAll('header, nav, .content-box').forEach(el => {
-                    el.classList.toggle('dark-mode');
-                });
-            });
-        } else {
-            console.error('Dark mode toggle button not found.');
+      // Dark mode toggle
+      if (darkModeToggle) {
+        // Check for saved preference
+        const savedMode = localStorage.getItem('darkMode');
+        
+        if (savedMode === 'enabled') {
+          document.body.classList.add('dark-mode');
+          darkModeToggle.textContent = 'Light Mode';
         }
-    });
+        
+        darkModeToggle.onclick = function() {
+          document.body.classList.toggle('dark-mode');
+          const isDarkMode = document.body.classList.contains('dark-mode');
+          localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+          darkModeToggle.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+        };
+      }
+      
+      // Photo collection - using explicit paths to your uploaded photos
+      const galleryPhotos = [
+        { src: 'images/photo1.JPG', alt: 'Rain gauge installation', caption: '<strong>Inner Ring Laser Cutting:</strong> Here is one of the inner rings from the outer can being laser cut in our university makerspace.' },
+        { src: 'images/photo2.JPG', alt: 'Weather station setup', caption: '<strong>Prototype Assembly:</strong> Setting up a Waterlogged station on a rooftop for optimal data collection.' },
+        { src: 'images/photo3.JPG', alt: 'Team working on prototype', caption: '<strong>Engineering Team:</strong> The engineering team testing our latest prototype design.' },
+        { src: 'images/photo4.JPG', alt: 'Field testing', caption: '<strong>Rain Testing:</strong> Field testing the rain gauge during a rainy day in Boston.' },
+        { src: 'images/photo5.JPG', alt: 'Data collection system', caption: '<strong>Data Collection System:</strong> Close-up of our data collection and transmission system.' },
+        { src: 'images/photo6.JPG', alt: 'Community installation', caption: '<strong>Community Installation:</strong> Community members helping with a new installation site.' },
+        { src: 'images/photo7.jpg', alt: 'Rainfall monitoring', caption: '<strong>Network Monitoring:</strong> Monitoring localized rainfall patterns across the network.' },
+        { src: 'images/photo8.jpg', alt: 'Team presentation', caption: '<strong>Science Fair:</strong> Presenting Waterlogged results at the science fair.' }
+      ];
+      
+      let currentPhotoIndex = 0;
+      
+      // Preload images for smoother transitions
+      function preloadImages() {
+        galleryPhotos.forEach(photo => {
+          const img = new Image();
+          img.src = photo.src;
+        });
+      }
+      
+      // Update gallery display
+      function updateGallery() {
+        if (!galleryImage || !photoCaption) {
+          console.error('Gallery elements not found');
+          return;
+        }
+        
+        const photo = galleryPhotos[currentPhotoIndex];
+        
+        // Create a temporary image to check dimensions before setting
+        const tempImg = new Image();
+        tempImg.onload = function() {
+          // Now that we know image loaded, update the real image
+          galleryImage.src = photo.src;
+          galleryImage.alt = photo.alt;
+        };
+        
+        tempImg.onerror = function() {
+          console.error('Image failed to load:', photo.src);
+          galleryImage.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15ba800aa21%20text%20%7B%20fill%3A%23333%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15ba800aa21%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23E0E0E0%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.921875%22%20y%3D%22218.3%22%3EImage%20Not%20Found%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
+        };
+        
+        // Start loading the image
+        tempImg.src = photo.src;
+        
+        // Update caption immediately
+        photoCaption.innerHTML = photo.caption;
+      }
+      
+      // Previous button handler
+      if (prevButton) {
+        prevButton.onclick = function() {
+          currentPhotoIndex = (currentPhotoIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
+          updateGallery();
+        };
+      }
+      
+      // Next button handler
+      if (nextButton) {
+        nextButton.onclick = function() {
+          currentPhotoIndex = (currentPhotoIndex + 1) % galleryPhotos.length;
+          updateGallery();
+        };
+      }
+      
+      // Keyboard navigation
+      document.onkeydown = function(e) {
+        if (e.key === 'ArrowLeft') {
+          if (prevButton) prevButton.click();
+        } else if (e.key === 'ArrowRight') {
+          if (nextButton) nextButton.click();
+        }
+      };
+      
+      // Initialize with first photo and preload others
+      preloadImages();
+      updateGallery();
+    })();
   </script>
 </body>
 </html>
