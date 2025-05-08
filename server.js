@@ -1,8 +1,18 @@
+/**
+ * Waterlogged Server
+ * 
+ * This Express server serves the Waterlogged web application and provides
+ * API endpoints that proxy requests to ThingSpeak for rain gauge data.
+ * 
+ * The server abstracts away the ThingSpeak API details and provides a
+ * simplified interface for the frontend to consume.
+ */
+
 // Import required packages
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
-const fetch = require('node-fetch'); // We'll need this for making HTTP requests
+const fetch = require('node-fetch'); // Used for making HTTP requests to ThingSpeak API
 
 // Load environment variables from .env file
 dotenv.config();

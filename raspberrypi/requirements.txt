@@ -1,9 +1,31 @@
-fastapi>=0.68.0,<0.69.0
-uvicorn>=0.15.0,<0.16.0
-pydantic>=1.8.0,<2.0.0
-SQLAlchemy>=1.4.23,<1.5.0
-python-dotenv>=0.19.0,<0.20.0
-requests>=2.26.0,<3.0.0
-pyserial>=3.5,<4.0.0  # For serial communication with Arduino
-aiosqlite>=0.17.0     # Async SQLite support
-python-multipart      # For handling form data
+# WaterLogged Raspberry Pi Gateway Requirements
+# Main web framework and API
+fastapi>=0.68.0,<0.69.0         # Fast web framework for building APIs
+
+# ASGI server for running FastAPI
+uvicorn>=0.15.0,<0.16.0         # ASGI server for FastAPI
+
+# Data validation and settings management
+pydantic>=1.8.0,<2.0.0          # Data validation and settings management
+
+# ORM and database interaction
+SQLAlchemy>=1.4.23,<1.5.0       # SQL toolkit and ORM
+
+# Environment variable management
+python-dotenv>=0.19.0,<0.20.0   # Load environment variables from .env file
+
+# HTTP requests (for external APIs)
+requests>=2.26.0,<3.0.0         # HTTP library for API requests
+
+# Serial communication with directly connected Arduino nodes
+pyserial>=3.5,<4.0.0            # For serial communication with Arduino
+
+# Async SQLite support (for better performance)
+aiosqlite>=0.17.0               # Async SQLite support
+
+# Form data handling for API
+python-multipart                # For handling form data
+
+# Recommended for production environments
+# gunicorn                      # Production WSGI server
+# supervisor                    # Process control system

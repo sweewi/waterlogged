@@ -41,16 +41,17 @@ case "$1" in
     
     # Initialize all pins
     init_gpio
-    WAIT_GPIO 0.1
+    WAIT_GPIO 0.5  # Longer delay for initial state
     
     # Power up sequence
     sudo gpioset gpiochip0 18=1  # power up
-    WAIT_GPIO 0.1
+    WAIT_GPIO 0.5  # Increased from 0.1 to 0.5 seconds
     sudo gpioset gpiochip0 17=1  # reset high
-    WAIT_GPIO 0.1
+    WAIT_GPIO 0.5  # Increased from 0.1 to 0.5 seconds
     sudo gpioset gpiochip0 17=0  # reset low
-    WAIT_GPIO 0.1
+    WAIT_GPIO 0.5  # Increased from 0.1 to 0.5 seconds
     sudo gpioset gpiochip0 13=1  # ADC reset high
+    WAIT_GPIO 0.5  # Added additional delay after ADC reset
     ;;
     stop)
     # Reset sequence for stop

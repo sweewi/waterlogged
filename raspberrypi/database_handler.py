@@ -1,4 +1,23 @@
 #!/usr/bin/env python3
+"""
+Database Handler for WaterLogged Rain Gauge System
+
+This module handles all database operations for the WaterLogged system, including:
+- Storing raw measurement data from rain gauge nodes
+- Creating and maintaining aggregated data tables (hourly, daily)
+- Providing query interfaces for the API server
+- Managing database maintenance tasks
+
+The database schema includes four main tables:
+1. raw_measurements: Individual readings from nodes
+2. hourly_aggregates: Hourly aggregated statistics
+3. daily_aggregates: Daily aggregated statistics
+4. nodes: Information about registered nodes
+
+Dependencies:
+- sqlite3: For database operations
+- datetime: For time operations and aggregation
+"""
 
 import sqlite3
 from datetime import datetime, timedelta
